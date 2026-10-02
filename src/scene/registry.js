@@ -66,6 +66,19 @@ export function names() {
   return { elements: [...elements.keys()], tracks: [...tracks.keys()], fx: [...fx.keys()] };
 }
 
+/** 块清单 + 参数 schema（编辑器据此自动生成调色板与属性面板） */
+export function blockSchemas() {
+  const dump = (m) =>
+    [...m.values()].map((b) => ({
+      name: b.name,
+      kind: b.kind,
+      mode: b.mode ?? null,
+      channels: b.channels ?? null,
+      params: b.params ?? {},
+    }));
+  return { elements: dump(elements), tracks: dump(tracks), fx: dump(fx) };
+}
+
 /** 遍历场景，逐个校验块存在（找不到会抛错并列出可用块），并校验同元素同通道的时间窗不重叠。 */
 export function assertSceneBlocks(scene) {
   for (const el of scene.elements) {

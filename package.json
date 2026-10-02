@@ -13,6 +13,7 @@
     "preview": "node tools/preview.js",
     "scene": "node tools/scene.js",
     "scene:preview": "node tools/scene-preview.js",
+    "scene:edit": "node tools/scene-editor.js",
     "probe:audio": "node tools/probe-audio.js",
     "beat:check": "node tools/beat-check.js",
     "detect:onsets": "node tools/onset-detect.js",

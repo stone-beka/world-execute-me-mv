@@ -38,4 +38,7 @@ test("renderPage 含时长、滑块、/frame、元素备注与标题", () => {
   assert.match(html, /hi/);
   assert.match(html, /场景预览/);
   assert.match(html, /window\.__INFO__/);
+  const m = html.match(/<script>([\s\S]*)<\/script>/);
+  assert.ok(m, "应能找到 <script> 块");
+  assert.doesNotThrow(() => new Function(m[1]), "预览页内联脚本不应有语法错误");
 });
