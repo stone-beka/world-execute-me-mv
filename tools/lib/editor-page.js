@@ -44,10 +44,11 @@ export function renderEditorPage({ scene, info, blocks }) {
   .track .h{display:flex;align-items:center;gap:6px;margin-bottom:4px}
   .track .h b{color:#7ce0a8;font-size:11px}
   footer{flex:0 0 auto;padding:8px 14px;border-top:1px solid #2a2a30}
-  #ticks{position:relative;height:10px;margin-bottom:5px}
-  #ticks .t{position:absolute;top:0;height:10px;width:1px;background:#3a3a44}
-  #ticks .t.s{background:#6b5a00}
-  #ticks .t.l{background:#2f6b47}
+  #tl{position:relative;height:26px;margin-bottom:6px;background:#0e0e12;border:1px solid #2a2a30;border-radius:4px;cursor:crosshair;overflow:hidden}
+  #tl .t{position:absolute;top:0;height:100%;width:1px;background:#3a3a44}
+  #tl .t.s{background:#6b5a00}
+  #tl .t.l{background:#2f6b47}
+  #tlplay{position:absolute;top:0;width:2px;height:100%;background:#ff6070;box-shadow:0 0 6px #ff6070}
   .scrubrow{display:flex;gap:10px;align-items:center}
   input[type=range]{flex:1}
   time{font-variant-numeric:tabular-nums;color:#c8f0e8;min-width:74px}
@@ -88,13 +89,15 @@ export function renderEditorPage({ scene, info, blocks }) {
   </div>
 </main>
 <footer>
-  <div id="ticks"></div>
+  <div id="tl"><div id="tlview"></div><div id="tlplay"></div></div>
   <div class="scrubrow">
+    <button class="sm" id="play">▶ 播放</button>
     <time id="tlabel">0:00.00</time>
-    <input type="range" id="scrub" min="0" max="${info.durationMs}" step="1" value="0">
+    <span class="hint" id="zoomlabel"></span>
     <button class="sm" id="b1">◀1s</button>
     <button class="sm" id="b2">1s▶</button>
   </div>
+  <audio id="audio" preload="auto" src="/audio"></audio>
 </footer>
 <div id="toast"></div>
 <script>
@@ -107,7 +110,6 @@ window.__DATA__ = ${data};
 
   var img = document.getElementById('view');
   var ov = document.getElementById('ov');
-  var slider = document.getElementById('scrub');
   var stage = document.getElementById('stage');
 
   function fmt(t){var s=t/1000,m=Math.floor(s/60),r=s-m*60;return m+':'+(r<10?'0':'')+r.toFixed(2);}
@@ -316,19 +318,67 @@ window.__DATA__ = ${data};
   function refreshFrame(){ syncScene(function(){ img.src='/frame?ms='+Math.round(ms)+'&t='+(++frameSeq); document.getElementById('tlabel').textContent=fmt(ms); var s=currentSection(ms),l=currentLyric(ms); document.getElementById('seclabel').textContent=s?s.name:'—'; document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）'; refreshResolve(drawOverlay); }); }
   function rebuild(){renderProps();renderTracks();renderTools();refreshFrame();}
 
-  // ---- 时间轴 ----
-  function seek(t){t=Math.max(0,Math.min(INFO.durationMs-1,t));slider.value=String(t);ms=t;refreshFrame();}
-  slider.addEventListener('input',function(){ms=Number(slider.value);if(timer)clearTimeout(timer);timer=setTimeout(refreshFrame,30);});
-  document.addEventListener('keydown',function(e){var step=e.shiftKey?10:Math.round(1000/fps);if(e.key==='ArrowLeft'){seek(ms-step);e.preventDefault();}else if(e.key==='ArrowRight'){seek(ms+step);e.preventDefault();}});
+  // ---- 时间轴：滚轮缩放 + 播放 ----
+  var tl = document.getElementById('tl');
+  var tlview = document.getElementById('tlview');
+  var tlplay = document.getElementById('tlplay');
+  var audio = document.getElementById('audio');
+  var view = { start: 0, span: INFO.durationMs };
+  var playing = false, scrubbing = false, inflight = false;
+  var MINSPAN = 300;
+
+  function clampView(){ view.span = Math.max(MINSPAN, Math.min(INFO.durationMs, view.span)); view.start = Math.max(0, Math.min(INFO.durationMs - view.span, view.start)); }
+  function tlRender(){
+    var html = '';
+    INFO.markers.sections.forEach(function(s){ var x=(s.startMs-view.start)/view.span; if(x>=0&&x<=1) html+='<div class="t s" style="left:'+(x*100)+'%" title="'+esc(s.name)+'"></div>'; });
+    INFO.markers.lyrics.forEach(function(l){ var x=(l.startMs-view.start)/view.span; if(x>=0&&x<=1) html+='<div class="t l" style="left:'+(x*100)+'%" title="'+esc(l.text)+'"></div>'; });
+    tlview.innerHTML = html;
+    var px = (ms - view.start) / view.span;
+    tlplay.style.left = (px*100) + '%';
+    tlplay.style.display = (px < -0.01 || px > 1.01) ? 'none' : '';
+    document.getElementById('zoomlabel').textContent = '窗口 ' + (view.span/1000).toFixed(1) + 's';
+  }
+  function tlSeek(e){ var r=tl.getBoundingClientRect(); var fx=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)); seek(view.start + fx*view.span); }
+  tl.addEventListener('wheel', function(e){ e.preventDefault();
+    var r=tl.getBoundingClientRect(); var fx=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
+    var anchor = view.start + fx*view.span;
+    view.span = view.span * (e.deltaY < 0 ? 0.85 : 1/0.85); clampView();
+    view.start = anchor - fx*view.span; clampView();
+    tlRender();
+  }, { passive: false });
+  tl.addEventListener('mousedown', function(e){ e.preventDefault(); scrubbing=true; tlSeek(e); });
+  document.addEventListener('mousemove', function(e){ if(scrubbing) tlSeek(e); });
+  document.addEventListener('mouseup', function(){ if(scrubbing){ scrubbing=false; refreshFrame(); } });
+
+  function seek(t){ ms = Math.max(0, Math.min(INFO.durationMs-1, t)); tlRender(); if(!playing) refreshFrame(); }
+  function schedulePlayFrame(){
+    if(inflight) return; inflight = true;
+    fetch('/frame?ms='+Math.round(ms)+'&scale=0.5&t='+(++frameSeq)).then(function(r){return r.blob();}).then(function(b){ if(playing) img.src = URL.createObjectURL(b); }).catch(function(){}).then(function(){ inflight=false; });
+  }
+  function playLoop(){
+    if(!playing) return;
+    ms = Math.min(INFO.durationMs-1, audio.currentTime*1000);
+    if(ms < view.start || ms > view.start + view.span){ view.start = Math.max(0, ms - view.span*0.35); clampView(); }
+    tlRender();
+    document.getElementById('tlabel').textContent = fmt(ms);
+    schedulePlayFrame();
+    requestAnimationFrame(playLoop);
+  }
+  document.getElementById('play').onclick = function(){
+    if(playing){ playing=false; audio.pause(); this.textContent='▶ 播放'; refreshFrame(); return; }
+    playing=true; this.textContent='⏸ 暂停';
+    try { audio.currentTime = ms/1000; } catch(_){}
+    audio.play().catch(function(){ toast('音频被浏览器拦截：先点一下页面再按播放', true); });
+    requestAnimationFrame(playLoop);
+  };
+  document.addEventListener('keydown',function(e){var step=e.shiftKey?10:Math.round(1000/fps);if(e.key==='ArrowLeft'){seek(ms-step);e.preventDefault();}else if(e.key==='ArrowRight'){seek(ms+step);e.preventDefault();}else if(e.key===' '){document.getElementById('play').click();e.preventDefault();}});
   document.getElementById('b1').onclick=function(){seek(ms-1000);};
   document.getElementById('b2').onclick=function(){seek(ms+1000);};
-  function buildTicks(){var w=document.getElementById('ticks'),h='',D=INFO.durationMs||1;INFO.markers.sections.forEach(function(s){h+='<div class="t s" style="left:'+(s.startMs/D*100)+'%" title="'+esc(s.name)+'"></div>';});INFO.markers.lyrics.forEach(function(l){h+='<div class="t l" style="left:'+(l.startMs/D*100)+'%" title="'+esc(l.text)+'"></div>';});w.innerHTML=h;}
-  document.getElementById('ticks').addEventListener('click',function(e){var r=this.getBoundingClientRect();seek((e.clientX-r.left)/r.width*INFO.durationMs);});
 
   // ---- 保存 ----
   document.getElementById('save').onclick=function(){fetch('/save',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){if(d.ok)toast('已保存 ✓');else toast('保存失败：'+d.error,true);}).catch(function(e){toast('保存失败：'+e.message,true);});};
 
-  renderPalette(); buildTicks(); setMode(); rebuild();
+  renderPalette(); tlRender(); setMode(); rebuild();
 })();
 </script>
 </body></html>`;

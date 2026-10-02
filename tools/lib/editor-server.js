@@ -9,7 +9,7 @@
  *   POST /save        写回场景文件（先备份 .bak）；校验失败返回 400 且不改文件
  */
 import { createServer } from "node:http";
-import { writeFileSync, copyFileSync, existsSync } from "node:fs";
+import { writeFileSync, copyFileSync, existsSync, statSync, createReadStream } from "node:fs";
 import { ts, createSurface, surfaceToPNG } from "../../src/core/render.js";
 import { renderSceneFrame } from "../../src/scene/render.js";
 import { resolveElement } from "../../src/scene/evaluate.js";
@@ -31,7 +31,7 @@ function readBody(req, limit = 8 * 1024 * 1024) {
   });
 }
 
-export function createEditorServer({ scenePath, scene, info, blocks, page, onSceneChange }) {
+export function createEditorServer({ scenePath, scene, info, blocks, page, audioPath = null, onSceneChange }) {
   const surface = createSurface();
   const surfaces = new Map();
   const surfaceFor = (scale) => {
@@ -152,6 +152,31 @@ export function createEditorServer({ scenePath, scene, info, blocks, page, onSce
         scene = next;
         if (onSceneChange) onSceneChange(next);
         json(200, { ok: true, elements: next.elements.length });
+        return;
+      }
+      if (req.method === "GET" && url.pathname === "/audio") {
+        if (!audioPath || !existsSync(audioPath)) {
+          res.writeHead(404, { "content-type": "text/plain" });
+          res.end("no audio");
+          return;
+        }
+        const size = statSync(audioPath).size;
+        const range = req.headers.range;
+        const m = range ? /bytes=(\d+)-(\d*)/.exec(range) : null;
+        if (m) {
+          const start = Number(m[1]);
+          const end = m[2] ? Number(m[2]) : size - 1;
+          res.writeHead(206, {
+            "content-type": "audio/wav",
+            "accept-ranges": "bytes",
+            "content-range": `bytes ${start}-${end}/${size}`,
+            "content-length": end - start + 1,
+          });
+          createReadStream(audioPath, { start, end }).pipe(res);
+        } else {
+          res.writeHead(200, { "content-type": "audio/wav", "accept-ranges": "bytes", "content-length": size });
+          createReadStream(audioPath).pipe(res);
+        }
         return;
       }
       res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });

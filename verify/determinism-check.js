@@ -90,6 +90,11 @@ const ALLOW = [
     reason: "只用于打印场景渲染耗时，不进画面",
   },
   {
+    file: "tools/lib/editor-page.js",
+    api: /requestAnimationFrame/,
+    reason: "只用于编辑器播放循环（界面预览），不进成片像素",
+  },
+  {
     file: "tools/inspect.js",
     api: /performance\.now\s*\(/,
     reason: "只用于检查器网页里的高亮脉冲动画，不进渲染产物",

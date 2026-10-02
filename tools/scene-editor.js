@@ -11,7 +11,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { ROOT, fps, sections } from "../src/core/timeline.js";
+import { ROOT, fps, sections, config } from "../src/core/timeline.js";
 import { ts } from "../src/core/render.js";
 import { registerProjectFonts } from "../src/core/fonts.js";
 import { lyrics } from "../src/core/lyrics.js";
@@ -66,8 +66,9 @@ const info = buildInfo(scene, {
 });
 const blocks = blockSchemas();
 const page = renderEditorPage({ scene, info, blocks });
+const audioPath = config.audio ? resolve(ROOT, config.audio) : null;
 
-createEditorServer({ scenePath, scene, info, blocks, page }).listen(PORT, () => {
+createEditorServer({ scenePath, scene, info, blocks, page, audioPath }).listen(PORT, () => {
   console.log(`▶ 场景编辑器：http://localhost:${PORT}  （${FILE}）`);
   console.log("  点模板→画面点一下放下 · 点元素选中/拖动 · 改完点保存（会写回 JSON，先备份 .bak）");
 });
