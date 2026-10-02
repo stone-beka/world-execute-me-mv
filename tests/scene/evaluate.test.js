@@ -1,8 +1,9 @@
 import { test, before } from "node:test";
 import assert from "node:assert/strict";
+import { createSurface } from "../../src/core/render.js";
 import { normalizeScene } from "../../src/scene/format.js";
 import { loadBlocks } from "../../src/scene/registry.js";
-import { resolveElement } from "../../src/scene/evaluate.js";
+import { resolveElement, evaluateScene } from "../../src/scene/evaluate.js";
 
 before(async () => { await loadBlocks(); });
 
@@ -51,4 +52,22 @@ test("生命淡出的起点 alpha=1，终点前趋近 0", () => {
 test("scale 轨迹改变 scale", () => {
   const e = el({ tracks: [{ kind: "scale", from: 1, to: 4, startMs: 0, durMs: 1000, ease: "linear" }] });
   assert.equal(resolveElement(e, 500).scale, 2.5);
+});
+
+test("evaluateScene 求值崩溃时报错带元素 id 与毫秒", () => {
+  const scene = normalizeScene({
+    id: "s",
+    durationMs: 10000,
+    elements: [
+      {
+        id: "a",
+        block: "rect",
+        at: { x: 0, y: 0 },
+        // move.line 缺 to：resolveElement 内部会抛错
+        tracks: [{ kind: "move", path: "line", from: { x: 0, y: 0 }, startMs: 0, durMs: 1000 }],
+      },
+    ],
+  });
+  const surface = createSurface();
+  assert.throws(() => evaluateScene(surface.ctx, scene, { ms: 500 }), /元素 "a".*ms .*崩溃/);
 });

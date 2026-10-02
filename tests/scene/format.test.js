@@ -89,3 +89,16 @@ test("at.x/at.y 非数字报错", () => {
     /at\.x/,
   );
 });
+
+test("normalizeScene 浅拷贝 params，不与入参别名", () => {
+  const params = { w: 10, h: 20 };
+  const s = normalizeScene({
+    id: "t",
+    durationMs: 1000,
+    elements: [{ id: "a", block: "rect", at: { x: 0, y: 0 }, params }],
+  });
+  assert.notEqual(s.elements[0].params, params);
+  assert.deepEqual(s.elements[0].params, { w: 10, h: 20 });
+  params.w = 999;
+  assert.equal(s.elements[0].params.w, 10);
+});

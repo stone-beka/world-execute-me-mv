@@ -123,6 +123,10 @@ function renderContact() {
 async function renderVideo() {
   const from = Math.max(0, Math.round(FROM_S * fps));
   const to = Math.min(Math.round(TO_S * fps), Math.round(scene.durationMs / 1000 * fps));
+  if (to < from) {
+    console.error("❌ --to 必须 >= --from");
+    process.exit(1);
+  }
   const mp4 = resolve(OUT_DIR, `${NAME}.mp4`);
   const vf = POST_ON ? buildPostFilter(POST) : null;
   const audio = NO_AUDIO ? null : findAudio();
@@ -142,14 +146,32 @@ async function renderVideo() {
 
   console.log(`▶ 视频 ${from}..${to} 帧 samples=${SAMPLES}${vf ? " + post" : ""}${audio ? " + 音轨" : ""}`);
   const ff = spawn(ffmpegPath, vargs);
+  ff.on("error", (e) => {
+    console.error(`❌ ffmpeg 启动失败：${e.message}`);
+    process.exitCode = 1;
+  });
+  ff.stdin.on("error", (e) => {
+    if (e.code === "EPIPE") return; // 提前关闭管道是正常现象
+    console.error(`❌ ffmpeg stdin 错误：${e.message}`);
+    process.exitCode = 1;
+  });
   const surface = createSurface();
   for (let f = from; f <= to; f++) {
     renderSceneFrame(surface.ctx, scene, f, { samples: SAMPLES, floor: FLOOR });
     if (!ff.stdin.write(surfaceToRGBA(surface))) await new Promise((r) => ff.stdin.once("drain", r));
   }
   ff.stdin.end();
-  await new Promise((r) => ff.on("close", r));
-  console.log(`✅ ${mp4}`);
+  await new Promise((resolvePromise) => {
+    ff.on("close", (code) => {
+      if (code !== 0) {
+        console.error(`❌ ffmpeg 退出码 ${code}`);
+        process.exitCode = 1;
+      } else {
+        console.log(`✅ ${mp4}`);
+      }
+      resolvePromise();
+    });
+  });
 }
 
 function runSelfcheck() {

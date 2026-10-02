@@ -62,7 +62,7 @@ function normalizeElement(el, i, durationMs, seen) {
   return {
     id: el.id,
     block: el.block,
-    params: el.params && typeof el.params === "object" ? el.params : {},
+    params: el.params && typeof el.params === "object" ? { ...el.params } : {},
     at: {
       x: el.at.x,
       y: el.at.y,

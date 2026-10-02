@@ -44,9 +44,13 @@ export function evaluateScene(ctx, scene, s, opt = {}) {
   const used = opt.used ?? null;
   let drawn = 0;
   for (const el of scene.elements) {
-    const r = resolveElement(el, s.ms);
-    if (!r.visible) continue;
-    drawResolved(ctx, s, el, r, used);
+    try {
+      const r = resolveElement(el, s.ms);
+      if (!r.visible) continue;
+      drawResolved(ctx, s, el, r, used);
+    } catch (err) {
+      throw new Error(`元素 "${el.id}" 在 ${s.ms.toFixed(1)}ms 崩溃：${err.message}`);
+    }
     drawn++;
   }
   return drawn;
