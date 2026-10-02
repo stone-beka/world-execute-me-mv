@@ -70,6 +70,18 @@ function normalizeElement(el, i, durationMs, seen) {
     .map((seg, j) => normalizeTrack(seg, el.id, j))
     .sort((a, b) => a.startMs - b.startMs);
 
+  const cuts = { move: [], scale: [], fx: [] };
+  if (el.cuts && typeof el.cuts === "object") {
+    for (const k of ["move", "scale", "fx"]) {
+      const arr = Array.isArray(el.cuts[k]) ? el.cuts[k] : [];
+      const seenCut = new Set();
+      cuts[k] = arr
+        .filter((v) => Number.isFinite(v) && v > inMs && v < outMs)
+        .sort((a, b) => a - b)
+        .filter((v) => (seenCut.has(v) ? false : (seenCut.add(v), true)));
+    }
+  }
+
   return {
     id: el.id,
     block: el.block,
@@ -83,6 +95,7 @@ function normalizeElement(el, i, durationMs, seen) {
     },
     life: { inMs, outMs, fadeInMs: num(el.life?.fadeInMs, 0), fadeOutMs: num(el.life?.fadeOutMs, 0) },
     tracks,
+    cuts,
     z: num(el.z, 0),
     notes: typeof el.notes === "string" ? el.notes : "",
   };

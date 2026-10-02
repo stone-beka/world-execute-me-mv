@@ -49,6 +49,21 @@ export function renderEditorPage({ scene, info, blocks }) {
   #tl .t.s{background:#6b5a00}
   #tl .t.l{background:#2f6b47}
   #tlplay{position:absolute;top:0;width:2px;height:100%;background:#ff6070;box-shadow:0 0 6px #ff6070}
+  #lanes{position:relative;margin-bottom:6px}
+  .lane{position:relative;height:20px;background:#0e0e12;border:1px solid #22222a;border-radius:3px;margin-top:3px;overflow:hidden}
+  .lane .lbl{position:absolute;left:4px;top:0;font-size:10px;color:#8b8b93;z-index:3;line-height:20px;pointer-events:none}
+  .lane .seg{position:absolute;top:0;height:100%;opacity:.8;border-right:1px solid #00000066}
+  .lane .seg.static{background:#22222a}
+  .lane .seg.line{background:#2f6b47}
+  .lane .seg.scale{background:#2440c8}
+  .lane .seg.fx{background:#6b3f9e}
+  .lane .seg.life{background:linear-gradient(90deg,#39ff8866,#ff3b5c66)}
+  .lane .seg.sel{outline:2px solid #ff6070;outline-offset:-2px}
+  .lane .hnd{position:absolute;top:-2px;width:7px;height:24px;margin-left:-3px;cursor:ew-resize;z-index:4;background:#8b8b93;border-radius:2px;opacity:.85}
+  .lane .hnd.life{background:#ff6070}
+  #ctxmenu{position:fixed;z-index:60;background:#16161c;border:1px solid #3a3a44;border-radius:5px;padding:4px;display:none;box-shadow:0 4px 16px #000a}
+  #ctxmenu button{display:block;width:100%;text-align:left;background:transparent;padding:5px 12px}
+  #ctxmenu button:hover{background:#26262e}
   .scrubrow{display:flex;gap:10px;align-items:center}
   input[type=range]{flex:1}
   time{font-variant-numeric:tabular-nums;color:#c8f0e8;min-width:74px}
@@ -90,6 +105,7 @@ export function renderEditorPage({ scene, info, blocks }) {
 </main>
 <footer>
   <div id="tl"><div id="tlview"></div><div id="tlplay"></div></div>
+  <div id="lanes"></div>
   <div class="scrubrow">
     <button class="sm" id="play">▶ 播放</button>
     <time id="tlabel">0:00.00</time>
@@ -99,6 +115,7 @@ export function renderEditorPage({ scene, info, blocks }) {
   </div>
   <audio id="audio" preload="auto" src="/audio"></audio>
 </footer>
+<div id="ctxmenu"></div>
 <div id="toast"></div>
 <script>
 window.__DATA__ = ${data};
@@ -204,6 +221,7 @@ window.__DATA__ = ${data};
   // ---- 创建 / 选中 / 拖动 / 缩放 ----
   stage.addEventListener('mousedown', function(e){
     var c=pt(e); if(!c) return;
+    if(pick){ if(pick.stage==='from'){ pick.from={x:Math.round(c.x),y:Math.round(c.y)}; pick.stage='to'; seek(pick.e); toast('点画面选「终点」'); } else { var pel=byId(pick.elId); if(pel) setSegmentTrack(pel,'move',pick.s,pick.e,{kind:'move',path:'line',from:pick.from,to:{x:Math.round(c.x),y:Math.round(c.y)},ease:'linear'}); pick=null; } return; }
     if(pending){ box={ block:pending, x0:c.x,y0:c.y,x1:c.x,y1:c.y }; drawOverlay(); return; }
     var hk=handleAt(c.x,c.y);
     if(hk){ var b=elementBox(curEl()); resize={ id:sel, corner:hk, box:b, fixed: fixedCorner(b,hk) }; return; }
@@ -306,12 +324,13 @@ window.__DATA__ = ${data};
     p.innerHTML=BLOCKS.elements.map(function(b){return '<button class="tpl" data-add="'+b.name+'">＋ '+b.name+'</button>';}).join('');
     p.querySelectorAll('[data-add]').forEach(function(btn){btn.onclick=function(){pending=btn.dataset.add;setMode();toast('在画面上从一角拖到另一角画框');};});
     var t=document.getElementById('addTracks');
-    t.innerHTML='<button class="tpl" id="tm-line">＋ 轨迹（直线）</button><button class="tpl" id="tm-scale">＋ 缩放</button><button class="tpl" id="tm-fx">＋ 特效</button>';
-    document.getElementById('tm-line').onclick=function(){addTrack('move','line');};
-    document.getElementById('tm-scale').onclick=function(){addTrack('scale');};
-    document.getElementById('tm-fx').onclick=function(){addTrack('fx');};
+    t.innerHTML='<button class="tpl" id="tm-line">＋ 轨迹</button><button class="tpl" id="tm-scale">＋ 缩放</button><button class="tpl" id="tm-fx">＋ 特效</button>';
+    document.getElementById('tm-line').onclick=function(){showLane('move');};
+    document.getElementById('tm-scale').onclick=function(){showLane('scale');};
+    document.getElementById('tm-fx').onclick=function(){showLane('fx');};
   }
   function renderTools(){ document.getElementById('trackTools').style.display = curEl() ? '' : 'none'; }
+  function showLane(kind){ var el=curEl(); if(!el){ toast('先选一个元素',true); return; } var s=shownLanes[el.id]||(shownLanes[el.id]={}); s[kind]=true; lanesRender(); }
   function setMode(){ document.getElementById('mode').textContent = pending ? ('拖框创建：'+pending) : ''; stage.classList.toggle('drawing', !!pending); }
 
   // ---- 字段编辑 ----
@@ -326,7 +345,7 @@ window.__DATA__ = ${data};
   function refreshResolve(cb){fetch('/resolve?ms='+Math.round(ms)).then(function(r){return r.json();}).then(function(d){resolved=d.items;if(cb)cb();}).catch(function(){});}
   function syncScene(cb){ if(!dirty){cb();return;} fetch('/working',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){ if(d.ok)dirty=false; else toast('同步失败：'+(d.error||'未知'),true); cb(); }).catch(function(){cb();}); }
   function refreshFrame(){ syncScene(function(){ img.src='/frame?ms='+Math.round(ms)+'&t='+(++frameSeq); document.getElementById('tlabel').textContent=fmt(ms); var s=currentSection(ms),l=currentLyric(ms); document.getElementById('seclabel').textContent=s?s.name:'—'; document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）'; refreshResolve(drawOverlay); }); }
-  function rebuild(){renderProps();renderTracks();renderTools();refreshFrame();}
+  function rebuild(){renderProps();renderTracks();renderTools();lanesRender();refreshFrame();}
 
   // ---- 时间轴：滚轮缩放 + 播放 ----
   var tl = document.getElementById('tl');
@@ -354,7 +373,7 @@ window.__DATA__ = ${data};
     var anchor = view.start + fx*view.span;
     view.span = view.span * (e.deltaY < 0 ? 0.85 : 1/0.85); clampView();
     view.start = anchor - fx*view.span; clampView();
-    tlRender();
+    tlRender(); lanesRender();
   }, { passive: false });
   tl.addEventListener('mousedown', function(e){ e.preventDefault(); scrubbing=true; tlSeek(e); });
   document.addEventListener('mousemove', function(e){ if(scrubbing) tlSeek(e); });
@@ -376,7 +395,7 @@ window.__DATA__ = ${data};
     var t = audio.currentTime*1000;
     if(t >= INFO.durationMs - 1){ stopPlay(); return; }
     ms = t;
-    if(ms < view.start || ms > view.start + view.span){ view.start = Math.max(0, ms - view.span*0.35); clampView(); }
+    if(ms < view.start || ms > view.start + view.span){ view.start = Math.max(0, ms - view.span*0.35); clampView(); lanesRender(); }
     tlRender();
     document.getElementById('tlabel').textContent = fmt(ms);
     schedulePlayFrame();
@@ -393,6 +412,107 @@ window.__DATA__ = ${data};
   document.addEventListener('keydown',function(e){var step=e.shiftKey?10:Math.round(1000/fps);if(e.key==='ArrowLeft'){seek(ms-step);e.preventDefault();}else if(e.key==='ArrowRight'){seek(ms+step);e.preventDefault();}else if(e.key===' '){document.getElementById('play').click();e.preventDefault();}});
   document.getElementById('b1').onclick=function(){seek(ms-1000);};
   document.getElementById('b2').onclick=function(){seek(ms+1000);};
+
+  // ---- 泳道：生命 + 轨迹/缩放/特效 ----
+  var laneSel = null, laneDrag = null, pick = null, shownLanes = {};
+  function boundsFor(el,kind){
+    var inMs=el.life.inMs,outMs=el.life.outMs,set=[inMs,outMs];
+    ((el.cuts&&el.cuts[kind])||[]).forEach(function(t){ if(t>inMs&&t<outMs) set.push(t); });
+    el.tracks.forEach(function(tr){ if(tr.kind!==kind)return; var s=Math.max(inMs,tr.startMs),e=Math.min(outMs,tr.startMs+tr.durMs); if(e>inMs&&s<outMs){set.push(s);set.push(e);} });
+    set=set.filter(function(t){return t>=inMs&&t<=outMs;}).sort(function(a,b){return a-b;});
+    return set.filter(function(t,i){return i===0||t!==set[i-1];});
+  }
+  function segTrackOf(el,kind,s,e){ for(var i=0;i<el.tracks.length;i++){var tr=el.tracks[i]; if(tr.kind!==kind)continue; if(Math.abs(tr.startMs-s)<0.5&&Math.abs(tr.startMs+tr.durMs-e)<0.5)return tr;} return null; }
+  function colFor(kind,type){ if(kind==='life')return 'life'; if(kind==='scale')return 'scale'; if(kind==='fx')return 'fx'; return type==='static'?'static':'line'; }
+  function pct(t){ return ((t-view.start)/view.span)*100; }
+  function laneRow(laneId,label,segs,handles){
+    var h='<div class="lane" data-lane="'+laneId+'"><span class="lbl">'+label+'</span>';
+    segs.forEach(function(sg){
+      var l=pct(sg.startMs), w=((sg.endMs-sg.startMs)/view.span)*100;
+      if(l+w<0||l>100) return;
+      var sel=(laneSel&&laneSel.kind===sg.kind&&Math.abs(laneSel.s-sg.startMs)<0.5&&Math.abs(laneSel.e-sg.endMs)<0.5)?' sel':'';
+      h+='<div class="seg '+colFor(sg.kind,sg.type)+sel+'" data-lane="'+laneId+'" data-s="'+sg.startMs+'" data-e="'+sg.endMs+'" style="left:'+Math.max(-1,l)+'%;width:'+Math.min(102,w)+'%"></div>';
+    });
+    (handles||[]).forEach(function(t){ var l=pct(t); if(l<-1||l>101)return; h+='<div class="hnd'+(laneId==='life'?' life':'')+'" data-lane="'+laneId+'" data-time="'+t+'" style="left:'+l+'%"></div>'; });
+    h+='</div>';
+    return h;
+  }
+  function lanesRender(){
+    var host=document.getElementById('lanes'); var el=curEl();
+    if(!el){ host.innerHTML='<div class="hint" style="padding:3px 0">选中一个元素后，这里显示它的「生命 / 轨迹 / 缩放 / 特效」行</div>'; return; }
+    var html='';
+    html+=laneRow('life','生命',[{kind:'life',startMs:el.life.inMs,endMs:el.life.outMs}],[el.life.inMs,el.life.outMs]);
+    var shown=shownLanes[el.id]||{};
+    ['move','scale','fx'].forEach(function(kind){
+      var has=el.tracks.some(function(tr){return tr.kind===kind;});
+      if(!shown[kind] && !has) return;
+      var b=boundsFor(el,kind), segs=[];
+      for(var i=0;i<b.length-1;i++){ var tr=segTrackOf(el,kind,b[i],b[i+1]); var type=tr?(kind==='move'?(tr.path||'line'):kind):'static'; segs.push({kind:kind,startMs:b[i],endMs:b[i+1],type:type}); }
+      html+=laneRow(kind, kind==='move'?'轨迹':(kind==='scale'?'缩放':'特效'), segs, b.slice(1,-1));
+    });
+    host.innerHTML=html;
+    host.querySelectorAll('.seg').forEach(function(sg){
+      sg.addEventListener('mousedown', function(e){ if(e.button!==0)return; var t=timeAt(e); laneSel={kind:sg.dataset.lane,s:Number(sg.dataset.s),e:Number(sg.dataset.e)}; if(sg.dataset.lane!=='life') seek(t); lanesRender(); });
+      sg.addEventListener('contextmenu', function(e){ e.preventDefault(); e.stopPropagation(); openMenu(e.clientX,e.clientY,el,sg.dataset.lane,Number(sg.dataset.s),Number(sg.dataset.e)); });
+    });
+    host.querySelectorAll('.lane').forEach(function(row){
+      row.addEventListener('dblclick', function(e){ var kind=row.dataset.lane; if(kind==='life')return; addCut(el,kind,timeAt(e)); lanesRender(); });
+    });
+    host.querySelectorAll('.hnd').forEach(function(hn){
+      hn.addEventListener('mousedown', function(e){ e.preventDefault(); e.stopPropagation(); laneDrag={ lane:hn.dataset.lane, t:Number(hn.dataset.time) }; });
+    });
+  }
+  function timeAt(e){ var r=document.getElementById('tl').getBoundingClientRect(); return view.start + Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*view.span; }
+  function addCut(el,kind,t){ if(t<=el.life.inMs+1||t>=el.life.outMs-1)return; var c=el.cuts[kind]||(el.cuts[kind]=[]); if(c.some(function(x){return Math.abs(x-t)<1;}))return; c.push(Math.round(t)); c.sort(function(a,b){return a-b;}); dirty=true; }
+  function setSegmentTrack(el,kind,s,e,track){ el.tracks=el.tracks.filter(function(tr){return !(tr.kind===kind && Math.abs(tr.startMs-s)<0.5 && Math.abs((tr.startMs+tr.durMs)-e)<0.5);}); el.tracks.push(Object.assign({startMs:Math.round(s),durMs:Math.round(e-s)},track)); el.tracks.sort(function(a,b){return a.startMs-b.startMs;}); dirty=true; lanesRender(); refreshFrame(); }
+  function delSegmentTrack(el,kind,s,e){ el.tracks=el.tracks.filter(function(tr){return !(tr.kind===kind && Math.abs(tr.startMs-s)<0.5 && Math.abs((tr.startMs+tr.durMs)-e)<0.5);}); dirty=true; lanesRender(); refreshFrame(); }
+  function openMenu(x,y,el,kind,s,e){
+    var m=document.getElementById('ctxmenu'), items;
+    if(kind==='move') items=[['静止','static'],['直线轨迹','line'],['—',''],['删除这段行为','del']];
+    else if(kind==='scale') items=[['缩放 1→0.5','scale'],['删除这段行为','del']];
+    else items=[['特效：发光','glow'],['删除这段行为','del']];
+    m.innerHTML=items.map(function(it){ return it[1]===''?'<div style="height:1px;background:#3a3a44;margin:3px 0"></div>':'<button data-v="'+it[1]+'">'+it[0]+'</button>';}).join('');
+    m.style.left=x+'px'; m.style.top=y+'px'; m.style.display='block';
+    m.querySelectorAll('button').forEach(function(b){ b.onclick=function(){ m.style.display='none'; applyBehavior(el,kind,s,e,b.dataset.v); }; });
+  }
+  function applyBehavior(el,kind,s,e,v){
+    if(v==='static'||v==='del'){ delSegmentTrack(el,kind,s,e); return; }
+    if(v==='line'){ pick={ elId:el.id, s:s, e:e, stage:'from', from:null }; seek(s); toast('点画面选「起点」'); return; }
+    if(v==='scale'){ setSegmentTrack(el,kind,s,e,{ kind:'scale', from:(el.at.scale||1), to:0.5, ease:'linear' }); return; }
+    if(v==='glow'){ setSegmentTrack(el,kind,s,e,{ kind:'fx', block:'glow', params:{} }); return; }
+  }
+  document.addEventListener('mousedown', function(e){ var m=document.getElementById('ctxmenu'); if(m.style.display==='block' && !m.contains(e.target)) m.style.display='none'; });
+  function moveBoundary(el,kind,t,t2){
+    var cuts=el.cuts[kind]||(el.cuts[kind]=[]);
+    for(var i=0;i<cuts.length;i++) if(Math.abs(cuts[i]-t)<0.5) cuts[i]=Math.round(t2);
+    cuts.sort(function(a,b){return a-b;});
+    el.tracks.forEach(function(tr){ if(tr.kind!==kind)return; var s=tr.startMs,en=tr.startMs+tr.durMs;
+      if(Math.abs(s-t)<0.5){ tr.startMs=Math.round(t2); tr.durMs=Math.round(en-t2); }
+      else if(Math.abs(en-t)<0.5){ tr.durMs=Math.round(t2-s); } });
+    dirty=true;
+  }
+  function clampToLife(el){
+    ['move','scale','fx'].forEach(function(kind){ el.cuts[kind]=(el.cuts[kind]||[]).filter(function(t){return t>el.life.inMs&&t<el.life.outMs;}); });
+    el.tracks.forEach(function(tr){ var s=Math.max(el.life.inMs,tr.startMs),e=Math.min(el.life.outMs,tr.startMs+tr.durMs); tr.startMs=s; tr.durMs=Math.max(1,e-s); });
+    el.tracks=el.tracks.filter(function(tr){return tr.durMs>1 && tr.startMs>=el.life.inMs-1 && tr.startMs<el.life.outMs;});
+  }
+  document.addEventListener('mousemove', function(e){
+    if(!laneDrag) return;
+    var el=curEl(); if(!el){ laneDrag=null; return; }
+    var t2=timeAt(e);
+    if(laneDrag.lane==='life'){
+      if(Math.abs(laneDrag.t-el.life.inMs)<1) el.life.inMs=Math.max(0,Math.min(el.life.outMs-1,Math.round(t2)));
+      else el.life.outMs=Math.max(el.life.inMs+1,Math.min(INFO.durationMs,Math.round(t2)));
+      clampToLife(el);
+    } else {
+      var b=boundsFor(el,laneDrag.lane), idx=b.findIndex(function(x){return Math.abs(x-laneDrag.t)<1;});
+      var lo=idx>0?b[idx-1]+1:el.life.inMs+1, hi=(idx>=0&&idx<b.length-1)?b[idx+1]-1:el.life.outMs-1;
+      var nt=Math.max(lo,Math.min(hi,Math.round(t2)));
+      moveBoundary(el,laneDrag.lane,laneDrag.t,nt); laneDrag.t=nt;
+    }
+    lanesRender(); renderProps(); live();
+  });
+  document.addEventListener('mouseup', function(){ if(laneDrag){ laneDrag=null; dirty=true; lanesRender(); refreshFrame(); } });
 
   // ---- 保存 ----
   document.getElementById('save').onclick=function(){fetch('/save',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){if(d.ok)toast('已保存 ✓');else toast('保存失败：'+d.error,true);}).catch(function(e){toast('保存失败：'+e.message,true);});};
