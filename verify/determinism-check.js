@@ -85,6 +85,11 @@ const ALLOW = [
     reason: "只用于「渲染进度看板」的速率/已用/剩余时间估算，不进画面",
   },
   {
+    file: "tools/scene.js",
+    api: /Date\.now\s*\(/,
+    reason: "只用于打印场景渲染耗时，不进画面",
+  },
+  {
     file: "tools/inspect.js",
     api: /performance\.now\s*\(/,
     reason: "只用于检查器网页里的高亮脉冲动画，不进渲染产物",
