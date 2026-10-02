@@ -896,7 +896,8 @@ export function resolveElement(el, ms) {
     const p = seg.durMs <= 0 ? 1 : clamp01((ms - seg.startMs) / seg.durMs);
     const e = easeFn(seg.ease)(p);
     if (seg.kind === "fx") {
-      fx.push({ block: seg.block, p, params: seg.params ?? {} });
+      // 特效只在窗口内挂上；窗口结束后不再生效（值类轨迹则保持终值）
+      if (ms < seg.startMs + seg.durMs) fx.push({ block: seg.block, p, params: seg.params ?? {} });
     } else {
       getTrackBlock(seg.kind).apply(state, e, seg);
     }
