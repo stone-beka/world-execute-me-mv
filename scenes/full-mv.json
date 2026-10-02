@@ -1,0 +1,23 @@
+{
+  "id": "full-mv",
+  "title": "world.execute(me); — 全片（旧画板桥接）",
+  "durationMs": 212000,
+  "background": "#05070a",
+  "boards": [
+    "shot-01",
+    "shot-02",
+    "shot-03",
+    "shot-04",
+    "shot-05",
+    "shot-06",
+    "shot-07",
+    "shot-08",
+    "shot-09",
+    "shot-10",
+    "shot-11",
+    "shot-12",
+    "shot-13",
+    "shot-14"
+  ],
+  "elements": []
+}

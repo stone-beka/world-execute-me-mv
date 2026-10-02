@@ -20,18 +20,29 @@ export function normalizeScene(raw) {
   if (!Number.isFinite(raw.durationMs) || raw.durationMs <= 0) {
     throw new SceneFormatError(`场景 "${raw.id}" 的 durationMs 必须是正数`);
   }
-  if (!Array.isArray(raw.elements) || raw.elements.length === 0) {
-    throw new SceneFormatError(`场景 "${raw.id}" 的 elements 必须是非空数组`);
+
+  const boards = Array.isArray(raw.boards)
+    ? raw.boards.map((bid, i) => {
+        if (typeof bid !== "string" || !bid) {
+          throw new SceneFormatError(`场景 "${raw.id}" 的 boards[${i}] 必须是字符串画板 id`);
+        }
+        return bid;
+      })
+    : [];
+  const rawElements = Array.isArray(raw.elements) ? raw.elements : [];
+  if (rawElements.length === 0 && boards.length === 0) {
+    throw new SceneFormatError(`场景 "${raw.id}" 至少要有一个 elements 或 boards`);
   }
 
   const seen = new Set();
-  const elements = raw.elements.map((el, i) => normalizeElement(el, i, raw.durationMs, seen));
+  const elements = rawElements.map((el, i) => normalizeElement(el, i, raw.durationMs, seen));
   elements.sort((a, b) => a.z - b.z);
   return {
     id: raw.id,
     title: typeof raw.title === "string" ? raw.title : "",
     durationMs: raw.durationMs,
     background: typeof raw.background === "string" ? raw.background : null,
+    boards,
     elements,
   };
 }
