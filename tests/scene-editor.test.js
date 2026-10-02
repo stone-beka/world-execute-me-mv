@@ -85,6 +85,30 @@ test("POST /save 写入文件", async () => {
   assert.equal(onDisk.elements[0].at.x, 500);
 });
 
+test("POST /working 更新内存工作场景但不落盘", async () => {
+  const before = readFileSync(scenePath, "utf8");
+  const next = JSON.parse(JSON.stringify(scene));
+  next.elements.push({
+    id: "b",
+    block: "rect",
+    params: { w: 30, h: 30 },
+    at: { x: 200, y: 200 },
+    life: { inMs: 0, outMs: 1000, fadeInMs: 0, fadeOutMs: 0 },
+    tracks: [],
+    z: 0,
+    notes: "",
+  });
+  const r = await (await fetch(`${base}/working`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(next),
+  })).json();
+  assert.equal(r.ok, true);
+  assert.equal(readFileSync(scenePath, "utf8"), before, "工作场景更新不应落盘");
+  const d = await (await fetch(`${base}/resolve?ms=0`)).json();
+  assert.ok(d.items.find((x) => x.id === "b"), "工作场景应含新元素 b");
+});
+
 test("POST /save 非法场景返回 400 且不改文件", async () => {
   const snapshot = readFileSync(scenePath, "utf8");
   const r = await fetch(`${base}/save`, {

@@ -100,6 +100,20 @@ export function createEditorServer({ scenePath, scene, info, blocks, page, onSce
         res.end(surfaceToPNG(surface));
         return;
       }
+      if (req.method === "POST" && url.pathname === "/working") {
+        const raw = await readBody(req);
+        let next;
+        try {
+          next = normalizeScene(JSON.parse(raw));
+          assertSceneBlocks(next);
+        } catch (err) {
+          json(400, { ok: false, error: err.message });
+          return;
+        }
+        scene = next; // 只更新内存工作场景，不落盘
+        json(200, { ok: true, elements: next.elements.length });
+        return;
+      }
       if (req.method === "POST" && url.pathname === "/save") {
         const raw = await readBody(req);
         let next;

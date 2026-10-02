@@ -102,7 +102,7 @@ window.__DATA__ = ${data};
   var D = window.__DATA__;
   var SCENE = D.scene, INFO = D.info, BLOCKS = D.blocks;
   var fps = INFO.fps || 60;
-  var ms = 0, sel = null, resolved = [], drag = null, resize = null, box = null, pending = null, timer = null;
+  var ms = 0, sel = null, resolved = [], drag = null, resize = null, box = null, pending = null, timer = null, dirty = false;
 
   var img = document.getElementById('view');
   var ov = document.getElementById('ov');
@@ -212,8 +212,8 @@ window.__DATA__ = ${data};
       var w=Math.abs(b.x1-b.x0), h=Math.abs(b.y1-b.y0);
       if(w<6||h<6){ toast('框太小，已取消',true); drawOverlay(); return; }
       createFromBox(b.block, b.x0,b.y0,b.x1,b.y1); return; }
-    if(resize){ resize=null; refreshFrame(); renderProps(); return; }
-    if(drag){ var moved=drag.moved; drag=null; if(moved){ renderProps(); refreshFrame(); } }
+    if(resize){ resize=null; dirty=true; refreshFrame(); renderProps(); return; }
+    if(drag){ var moved=drag.moved; drag=null; if(moved){ dirty=true; renderProps(); refreshFrame(); } }
   });
   function syncResolved(el){ resolved.forEach(function(it){ if(it.id===el.id){ it.x=el.at.x; it.y=el.at.y; } }); }
 
@@ -222,7 +222,7 @@ window.__DATA__ = ${data};
     var el={ id:uid(block), block:block, params:defaultParams(block), at:{x:Math.round(b.x+b.w/2),y:Math.round(b.y+b.h/2),scale:1,rot:0,alpha:1},
              life:{inMs:0,outMs:SCENE.durationMs,fadeInMs:0,fadeOutMs:0}, tracks:[], z:0, notes:'' };
     applyBox(el, b);
-    SCENE.elements.push(el); sel=el.id; renderProps(); renderTracks(); renderTools(); refreshFrame();
+    SCENE.elements.push(el); sel=el.id; dirty=true; renderProps(); renderTracks(); renderTools(); refreshFrame();
   }
 
   // ---- 属性 ----
@@ -245,9 +245,9 @@ window.__DATA__ = ${data};
     h+='<div class="row"><button class="x" id="delEl">删除元素</button></div>';
     p.innerHTML=h;
     var li=document.getElementById('lifeIn'),lo=document.getElementById('lifeOut'),de=document.getElementById('delEl');
-    if(li)li.onclick=function(){el.life.inMs=Math.round(ms);renderProps();refreshFrame();};
-    if(lo)lo.onclick=function(){el.life.outMs=Math.round(ms);renderProps();refreshFrame();};
-    if(de)de.onclick=function(){SCENE.elements=SCENE.elements.filter(function(x){return x.id!==el.id;});sel=null;renderProps();renderTracks();renderTools();refreshFrame();};
+    if(li)li.onclick=function(){el.life.inMs=Math.round(ms);dirty=true;renderProps();refreshFrame();};
+    if(lo)lo.onclick=function(){el.life.outMs=Math.round(ms);dirty=true;renderProps();refreshFrame();};
+    if(de)de.onclick=function(){SCENE.elements=SCENE.elements.filter(function(x){return x.id!==el.id;});sel=null;dirty=true;renderProps();renderTracks();renderTools();refreshFrame();};
   }
   function fxSchema(n){for(var i=0;i<BLOCKS.fx.length;i++)if(BLOCKS.fx[i].name===n)return BLOCKS.fx[i];return null;}
   function renderTracks(){
@@ -269,14 +269,14 @@ window.__DATA__ = ${data};
       h+='</div>';
     });
     c.innerHTML=h||'<div class="hint">（无轨迹）</div>';
-    c.querySelectorAll('[data-del-tr]').forEach(function(b){b.onclick=function(){el.tracks.splice(Number(b.dataset.delTr),1);renderTracks();refreshFrame();};});
+    c.querySelectorAll('[data-del-tr]').forEach(function(b){b.onclick=function(){el.tracks.splice(Number(b.dataset.delTr),1);dirty=true;renderTracks();refreshFrame();};});
   }
   function addTrack(kind,path){
     var el=curEl();if(!el){toast('先选一个元素',true);return;}
     if(kind==='move')el.tracks.push({kind:'move',path:path,from:{x:el.at.x,y:el.at.y},to:{x:el.at.x+300,y:el.at.y},center:{x:el.at.x+150,y:el.at.y+120},via:{x:el.at.x+150,y:el.at.y-160},sweep:360,startMs:Math.round(ms),durMs:1000,ease:'linear'});
     else if(kind==='scale')el.tracks.push({kind:'scale',from:1,to:0.5,startMs:Math.round(ms),durMs:1000,ease:'linear'});
     else if(kind==='fx')el.tracks.push({kind:'fx',block:(BLOCKS.fx[0]&&BLOCKS.fx[0].name)||'glow',startMs:Math.round(ms),durMs:1000,params:{}});
-    renderTracks();refreshFrame();
+    dirty=true; renderTracks(); refreshFrame();
   }
 
   // ---- 左侧栏 ----
@@ -298,12 +298,13 @@ window.__DATA__ = ${data};
     var t=e.target,f=t.dataset&&t.dataset.f;if(!f)return;var el=byId(t.dataset.el);if(!el)return;
     var v=t.type==='number'?Number(t.value):t.value;
     if(t.dataset.ti!=null)setPath(el.tracks[Number(t.dataset.ti)],f,v);else{setPath(el,f,v);if(f==='id')sel=el.id;}
-    refreshFrame();
+    dirty=true; refreshFrame();
   });
 
   // ---- 刷新 ----
   function refreshResolve(cb){fetch('/resolve?ms='+Math.round(ms)).then(function(r){return r.json();}).then(function(d){resolved=d.items;if(cb)cb();}).catch(function(){});}
-  function refreshFrame(){img.src='/frame?ms='+Math.round(ms);document.getElementById('tlabel').textContent=fmt(ms);var s=currentSection(ms),l=currentLyric(ms);document.getElementById('seclabel').textContent=s?s.name:'—';document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）';refreshResolve(drawOverlay);}
+  function syncScene(cb){ if(!dirty){cb();return;} fetch('/working',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){ if(d.ok)dirty=false; cb(); }).catch(function(){cb();}); }
+  function refreshFrame(){ syncScene(function(){ img.src='/frame?ms='+Math.round(ms); document.getElementById('tlabel').textContent=fmt(ms); var s=currentSection(ms),l=currentLyric(ms); document.getElementById('seclabel').textContent=s?s.name:'—'; document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）'; refreshResolve(drawOverlay); }); }
   function rebuild(){renderProps();renderTracks();renderTools();refreshFrame();}
 
   // ---- 时间轴 ----
