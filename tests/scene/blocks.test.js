@@ -60,7 +60,8 @@ test("六个块全部载入（Task 2 的完整回归）", async () => {
   const n = names();
   assert.deepEqual(n.elements.slice().sort(), ["rect", "text", "wireHeart"]);
   assert.deepEqual(n.tracks.slice().sort(), ["move", "scale"]);
-  assert.deepEqual(n.fx, ["glow", "fragment", "dissolve", "tint", "blink"]);
+  assert.deepEqual(n.fx.slice().sort(), ["fragment", "glow", "jitter"]);
+  assert.deepEqual(n.bgfx.slice().sort(), ["flash", "invert", "tint"]);
 });
 
 test("move.line 起点/终点/保持", () => {

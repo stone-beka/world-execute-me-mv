@@ -13,14 +13,16 @@ const MANIFEST = [
   "./blocks/track.scale.js",
   "./blocks/fx.glow.js",
   "./blocks/fx.fragment.js",
-  "./blocks/fx.dissolve.js",
-  "./blocks/fx.tint.js",
-  "./blocks/fx.blink.js",
+  "./blocks/fx.jitter.js",
+  "./blocks/bgfx.tint.js",
+  "./blocks/bgfx.invert.js",
+  "./blocks/bgfx.flash.js",
 ];
 
 const elements = new Map();
 const tracks = new Map();
 const fx = new Map();
+const bgfx = new Map();
 let loaded = false;
 
 export async function loadBlocks() {
@@ -32,8 +34,8 @@ export async function loadBlocks() {
       if (!b || typeof b.name !== "string" || typeof b.kind !== "string") {
         throw new Error(`块文件 ${rel} 必须默认导出 { name, kind, ... }`);
       }
-      const table = b.kind === "element" ? elements : b.kind === "track" ? tracks : b.kind === "fx" ? fx : null;
-      if (!table) throw new Error(`块 ${b.name}（${rel}）的 kind 非法："${b.kind}"（只允许 element/track/fx）`);
+      const table = b.kind === "element" ? elements : b.kind === "track" ? tracks : b.kind === "fx" ? fx : b.kind === "bgfx" ? bgfx : null;
+      if (!table) throw new Error(`块 ${b.name}（${rel}）的 kind 非法："${b.kind}"（只允许 element/track/fx/bgfx）`);
       if (table.has(b.name)) throw new Error(`块名重复："${b.name}"`);
       table.set(b.name, b);
     }
@@ -43,6 +45,7 @@ export async function loadBlocks() {
     elements.clear();
     tracks.clear();
     fx.clear();
+    bgfx.clear();
     loaded = false;
     throw err;
   }
@@ -66,8 +69,14 @@ export function getFxBlock(name) {
   return b;
 }
 
+export function getBgfxBlock(name) {
+  const b = bgfx.get(name);
+  if (!b) throw new Error(`未知背景特效块 "${name}"。可用：${[...bgfx.keys()].join(", ")}`);
+  return b;
+}
+
 export function names() {
-  return { elements: [...elements.keys()], tracks: [...tracks.keys()], fx: [...fx.keys()] };
+  return { elements: [...elements.keys()], tracks: [...tracks.keys()], fx: [...fx.keys()], bgfx: [...bgfx.keys()] };
 }
 
 /** 块清单 + 参数 schema（编辑器据此自动生成调色板与属性面板） */
@@ -80,11 +89,12 @@ export function blockSchemas() {
       channels: b.channels ?? null,
       params: b.params ?? {},
     }));
-  return { elements: dump(elements), tracks: dump(tracks), fx: dump(fx) };
+  return { elements: dump(elements), tracks: dump(tracks), fx: dump(fx), bgfx: dump(bgfx) };
 }
 
 /** 遍历场景，逐个校验块存在（找不到会抛错并列出可用块），并校验同元素同通道的时间窗不重叠。 */
 export function assertSceneBlocks(scene) {
+  for (const seg of scene.bgfx ?? []) getBgfxBlock(seg.block);
   for (const el of scene.elements) {
     getElementBlock(el.block);
     const windows = new Map(); // channel -> [{ start, end }]
@@ -117,5 +127,6 @@ export function resetBlocks() {
   elements.clear();
   tracks.clear();
   fx.clear();
+  bgfx.clear();
   loaded = false;
 }

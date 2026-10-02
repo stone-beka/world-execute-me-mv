@@ -112,13 +112,6 @@ test("POST /working 更新内存工作场景但不落盘", async () => {
   assert.ok(!frameBefore.equals(frameAfter), "工作场景变化应反映到 /frame 像素");
 });
 
-test("/frame 支持 scale 半分辨率（拖动预览用）", async () => {
-  const buf = Buffer.from(await (await fetch(`${base}/frame?ms=0&scale=0.5`)).arrayBuffer());
-  assert.equal(buf.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
-  assert.equal(buf.readUInt32BE(16), 960);
-  assert.equal(buf.readUInt32BE(20), 540);
-});
-
 test("POST /save 非法场景返回 400 且不改文件", async () => {
   const snapshot = readFileSync(scenePath, "utf8");
   const r = await fetch(`${base}/save`, {

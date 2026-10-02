@@ -9,6 +9,7 @@ import { ts, createSurface } from "../core/render.js";
 import { makeState } from "../core/registry.js";
 import { drawFloor } from "../core/floor.js";
 import { evaluateScene } from "./evaluate.js";
+import { applyGlobalFx } from "./global-fx.js";
 
 let scratch = null;
 function getScratch() {
@@ -53,5 +54,6 @@ function drawSceneFrame(ctx, scene, frame, opt = {}, msOverride) {
   const drawn = evaluateScene(ctx, scene, base, opt);
 
   if (opt.floor ?? ts.floor) drawFloor(ctx, base);
+  applyGlobalFx(ctx, scene, base, opt);
   return { drawn, samples: 1 };
 }

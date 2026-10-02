@@ -7,7 +7,6 @@
 import { envelope } from "../core/fade.js";
 import { easeFn } from "../core/motion.js";
 import { clamp01 } from "../core/kernel.js";
-import { ts, createSurface } from "../core/render.js";
 import { getElementBlock, getTrackBlock, getFxBlock } from "./registry.js";
 import { drawSceneBoards } from "./board-layer.js";
 
@@ -68,25 +67,23 @@ export function evaluateScene(ctx, scene, s, opt = {}) {
 function drawResolved(ctx, s, el, r, used) {
   const block = getElementBlock(el.block);
   if (used) used.add(`element:${el.block}`);
+  let size = null;
+  if (typeof block.sizeOf === "function") size = block.sizeOf(el.params ?? {});
+  const info = { el, size };
 
-  // 先把元素画到离屏面，特效只作用于它自己（不碰背景）
-  const sc = getScratch();
-  const c2 = sc.ctx;
-  c2.setTransform(1, 0, 0, 1, 0, 0);
-  c2.clearRect(0, 0, ts.width, ts.height);
-  c2.save();
-  c2.translate(r.x, r.y);
-  c2.rotate(r.rot);
-  c2.scale(r.scale, r.scale);
-  c2.globalAlpha = r.alpha;
+  ctx.save();
+  ctx.translate(r.x, r.y);
+  ctx.rotate(r.rot);
+  ctx.scale(r.scale, r.scale);
+  ctx.globalAlpha *= r.alpha;
 
-  let inner = () => block.draw(c2, s, el.params ?? {});
+  let inner = () => block.draw(ctx, s, el.params ?? {});
   for (const f of r.fx) {
     const fxBlock = getFxBlock(f.block);
     if (used) used.add(`fx:${f.block}`);
     const base = inner;
     if (fxBlock.mode === "wrap") {
-      inner = () => fxBlock.drawWrapped(c2, s, base, f.p, f.params);
+      inner = () => fxBlock.drawWrapped(ctx, s, base, f.p, f.params, info);
     } else {
       inner = () => {
         fxBlock.apply(s, f.p, f.params);
@@ -95,16 +92,5 @@ function drawResolved(ctx, s, el, r, used) {
     }
   }
   inner();
-  c2.restore();
-
-  ctx.save();
-  ctx.globalAlpha = 1;
-  ctx.drawImage(sc.canvas, 0, 0);
   ctx.restore();
-}
-
-let scratch = null;
-function getScratch() {
-  if (!scratch) scratch = createSurface();
-  return scratch;
 }

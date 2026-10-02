@@ -37,6 +37,16 @@ export function normalizeScene(raw) {
   const seen = new Set();
   const elements = rawElements.map((el, i) => normalizeElement(el, i, raw.durationMs, seen));
   elements.sort((a, b) => a.z - b.z);
+
+  const bgfx = Array.isArray(raw.bgfx)
+    ? raw.bgfx.map((seg, i) => normalizeBgfx(seg, i, raw.durationMs)).sort((a, b) => a.startMs - b.startMs)
+    : [];
+  const seenBg = new Set();
+  const bgCuts = (Array.isArray(raw.bgCuts) ? raw.bgCuts : [])
+    .filter((v) => Number.isFinite(v) && v > 0 && v < raw.durationMs)
+    .sort((a, b) => a - b)
+    .filter((v) => (seenBg.has(v) ? false : (seenBg.add(v), true)));
+
   return {
     id: raw.id,
     title: typeof raw.title === "string" ? raw.title : "",
@@ -44,6 +54,22 @@ export function normalizeScene(raw) {
     background: typeof raw.background === "string" ? raw.background : null,
     boards,
     elements,
+    bgfx,
+    bgCuts,
+  };
+}
+
+function normalizeBgfx(seg, i, durationMs) {
+  if (!seg || typeof seg !== "object") throw new SceneFormatError(`bgfx[${i}] 必须是对象`);
+  if (typeof seg.block !== "string" || !seg.block) throw new SceneFormatError(`bgfx[${i}] 缺少字符串 block`);
+  const startMs = num(seg.startMs, 0);
+  const endMs = num(seg.endMs, durationMs);
+  if (endMs <= startMs) throw new SceneFormatError(`bgfx[${i}] 的 endMs (${endMs}) 必须大于 startMs (${startMs})`);
+  return {
+    startMs,
+    endMs,
+    block: seg.block,
+    params: seg.params && typeof seg.params === "object" ? { ...seg.params } : {},
   };
 }
 
@@ -72,7 +98,7 @@ function normalizeElement(el, i, durationMs, seen) {
 
   const cuts = { move: [], scale: [], fx: [] };
   if (el.cuts && typeof el.cuts === "object") {
-    for (const k of Object.keys(el.cuts)) {
+    for (const k of ["move", "scale", "fx"]) {
       const arr = Array.isArray(el.cuts[k]) ? el.cuts[k] : [];
       const seenCut = new Set();
       cuts[k] = arr

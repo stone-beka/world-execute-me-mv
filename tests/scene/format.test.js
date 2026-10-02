@@ -113,6 +113,29 @@ test("cuts 只保留场景内、去重、升序", () => {
   assert.deepEqual(s.elements[0].cuts.scale, []);
 });
 
+test("bgfx 段保留并排序；bgCuts 去重排序", () => {
+  const s = normalizeScene({
+    id: "t",
+    durationMs: 1000,
+    elements: [{ id: "a", block: "rect", at: { x: 0, y: 0 } }],
+    bgfx: [
+      { startMs: 500, endMs: 800, block: "tint", params: { color: "#f00" } },
+      { startMs: 100, endMs: 300, block: "invert" },
+    ],
+    bgCuts: [400, 400, 50],
+  });
+  assert.deepEqual(s.bgfx.map((x) => x.block), ["invert", "tint"]);
+  assert.equal(s.bgfx[1].params.color, "#f00");
+  assert.deepEqual(s.bgCuts, [50, 400]);
+});
+
+test("bgfx endMs<=startMs 报错", () => {
+  assert.throws(
+    () => normalizeScene({ id: "t", durationMs: 1000, elements: [{ id: "a", block: "rect", at: { x: 0, y: 0 } }], bgfx: [{ startMs: 100, endMs: 100, block: "tint" }] }),
+    /bgfx/,
+  );
+});
+
 test("boards-only 场景合法（elements 可为空）", () => {
   const s = normalizeScene({ id: "t", durationMs: 1000, boards: ["shot-01", "shot-02"] });
   assert.deepEqual(s.boards, ["shot-01", "shot-02"]);

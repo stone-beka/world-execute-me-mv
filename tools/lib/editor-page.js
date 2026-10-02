@@ -290,29 +290,45 @@ window.__DATA__ = ${data};
     if(de)de.onclick=function(){SCENE.elements=SCENE.elements.filter(function(x){return x.id!==el.id;});sel=null;dirty=true;rebuildPanels();refreshFrame();};
   }
   function fxSchema(n){for(var i=0;i<BLOCKS.fx.length;i++)if(BLOCKS.fx[i].name===n)return BLOCKS.fx[i];return null;}
+  function bgfxSchema(n){var a=BLOCKS.bgfx||[];for(var i=0;i<a.length;i++)if(a[i].name===n)return a[i];return null;}
   function segNum(label,key,val){ return '<div class="row"><label>'+label+'</label><input type="number" step="any" data-segf="'+key+'" value="'+val+'"></div>'; }
   function renderSegEdit(){
     var host=document.getElementById('segedit'), el=curEl();
-    if(!el || !laneSel || laneSel.kind==='life'){ host.innerHTML='<div class="hint">（在泳道里点一段）</div>'; return; }
-    var key=laneSel.kind, pk=parseKey(key), s=laneSel.s, e=laneSel.e;
-    var tr=segTrackOf(el,key,s,e);
-    var h='<div class="hint">'+key+' · '+fmt(s)+' → '+fmt(e)+'</div>';
-    if(!tr){ host.innerHTML=h+'<div class="hint">'+(pk.kind==='fx'?'此段未启用。右键选「应用此特效」。':'静止 / 无动作。右键选择行为。')+'</div>'; return; }
-    if(pk.kind==='move'){
+    if(!laneSel || laneSel.kind==='life' || (laneSel.kind!=='bgfx' && !el)){ host.innerHTML='<div class="hint">（在泳道里点一段）</div>'; return; }
+    var kind=laneSel.kind, s=laneSel.s, e=laneSel.e;
+    if(kind==='bgfx'){
+      var sg=bgSegAt(s,e);
+      var h0='<div class="hint">背景特效 · '+fmt(s)+' → '+fmt(e)+'</div>';
+      if(!sg){ host.innerHTML=h0+'<div class="hint">无（右键选择特效）。</div>'; return; }
+      h0+='<div class="row"><label>特效</label><select id="bgsel">'+(BLOCKS.bgfx||[]).map(function(f){return '<option value="'+f.name+'"'+(sg.block===f.name?' selected':'')+'>'+f.name+'</option>';}).join('')+'</select></div>';
+      var sch=bgfxSchema(sg.block);
+      if(sch) Object.keys(sch.params||{}).forEach(function(k){ var d=sch.params[k], v=sg.params&&sg.params[k]!=null?sg.params[k]:d.default; h0+='<div class="row"><label>'+k+'</label><input type="'+(d.type==='color'?'color':'number')+'" '+(d.type==='color'?'':'step="any" ')+'data-bgf="'+k+'" value="'+(v==null?'':v)+'"></div>'; });
+      host.innerHTML=h0;
+      var bsel=document.getElementById('bgsel');
+      if(bsel) bsel.onchange=function(){ sg.block=bsel.value; sg.params={}; dirty=true; renderSegEdit(); lanesRender(); refreshFrame(); };
+      host.querySelectorAll('[data-bgf]').forEach(function(inp){ inp.onchange=function(){ var k=inp.dataset.bgf; var v=inp.type==='number'?Number(inp.value):inp.value; sg.params=sg.params||{}; sg.params[k]=v; dirty=true; refreshFrame(); }; });
+      return;
+    }
+    var tr=segTrackOf(el,kind,s,e);
+    var h='<div class="hint">'+kind+' · '+fmt(s)+' → '+fmt(e)+'</div>';
+    if(!tr){ host.innerHTML=h+'<div class="hint">静止 / 无动作。右键该段选择行为。</div>'; return; }
+    if(kind==='move'){
       h+='<div class="row"><label>轨迹</label><select data-segf="path"><option value="line"'+(tr.path==='line'?' selected':'')+'>直线</option><option value="orbit"'+(tr.path==='orbit'?' selected':'')+'>圆形</option></select></div>';
       if(tr.path==='orbit'){ h+=segNum('center.x',tr.center?tr.center.x:0)+segNum('center.y',tr.center?tr.center.y:0)+segNum('sweep',tr.sweep!=null?tr.sweep:360); }
       else { h+=segNum('from.x',tr.from?tr.from.x:0)+segNum('from.y',tr.from?tr.from.y:0)+segNum('to.x',tr.to?tr.to.x:0)+segNum('to.y',tr.to?tr.to.y:0); }
-    } else if(pk.kind==='scale'){
+    } else if(kind==='scale'){
       h+=segNum('from',tr.from)+segNum('to',tr.to);
       h+='<div class="row"><label>预览</label><input type="range" id="scaleprev" min="0.1" max="3" step="0.05" value="'+tr.to+'"></div>';
     } else {
-      h+='<div class="hint">特效：'+pk.block+'</div>';
-      var sch=fxSchema(pk.block);
+      h+='<div class="row"><label>特效</label><select data-segf="block">'+BLOCKS.fx.map(function(f){return '<option value="'+f.name+'"'+(tr.block===f.name?' selected':'')+'>'+f.name+'</option>';}).join('')+'</select></div>';
+      var sch=fxSchema(tr.block);
       if(sch) Object.keys(sch.params||{}).forEach(function(k){ var d=sch.params[k], v=tr.params&&tr.params[k]!=null?tr.params[k]:d.default; h+=segNum(k,'params.'+k,(v==null?'':v)); });
     }
     host.innerHTML=h;
     var ps=host.querySelector('[data-segf="path"]');
-    if(ps) ps.onchange=function(){ tr.path=ps.value; if(tr.path==='orbit'&&!tr.center) tr.center={x:Math.round(((tr.from?tr.from.x:0)+(tr.to?tr.to.x:0))/2),y:Math.round(((tr.from?tr.from.y:0)+(tr.to?tr.to.y:0))/2)}; dirty=true; renderSegEdit(); lanesRender(); refreshFrame(); };
+    if(ps) ps.onchange=function(){ tr.path=ps.value; if(tr.path==='orbit'&&!tr.center) tr.center={x:Math.round((tr.from.x+tr.to.x)/2),y:Math.round((tr.from.y+tr.to.y)/2)}; dirty=true; renderSegEdit(); lanesRender(); refreshFrame(); };
+    var bs=host.querySelector('[data-segf="block"]');
+    if(bs) bs.onchange=function(){ tr.block=bs.value; dirty=true; renderSegEdit(); lanesRender(); refreshFrame(); };
     host.querySelectorAll('input[data-segf]').forEach(function(inp){ inp.onchange=function(){ var k=inp.dataset.segf; var v=inp.type==='number'?Number(inp.value):inp.value; setPath(tr,k,v); dirty=true; refreshFrame(); }; });
     var sp=host.querySelector('#scaleprev');
     if(sp) sp.oninput=function(){ tr.to=Number(sp.value); dirty=true; refreshFrame(); };
@@ -324,14 +340,13 @@ window.__DATA__ = ${data};
     p.innerHTML=BLOCKS.elements.map(function(b){return '<button class="tpl" data-add="'+b.name+'">＋ '+b.name+'</button>';}).join('');
     p.querySelectorAll('[data-add]').forEach(function(btn){btn.onclick=function(){pending=btn.dataset.add;setMode();toast('在画面上从一角拖到另一角画框');};});
     var t=document.getElementById('addTracks');
-    t.innerHTML='<button class="tpl" id="tm-line">＋ 轨迹</button><button class="tpl" id="tm-scale">＋ 缩放</button>'+BLOCKS.fx.map(function(f){return '<button class="tpl" data-fx="'+f.name+'">＋ 特效：'+f.name+'</button>';}).join('');
+    t.innerHTML='<button class="tpl" id="tm-line">＋ 轨迹</button><button class="tpl" id="tm-scale">＋ 缩放</button><button class="tpl" id="tm-fx">＋ 特效</button>';
     document.getElementById('tm-line').onclick=function(){showLane('move');};
     document.getElementById('tm-scale').onclick=function(){showLane('scale');};
-    t.querySelectorAll('[data-fx]').forEach(function(b){ b.onclick=function(){ showFxLane(b.dataset.fx); }; });
+    document.getElementById('tm-fx').onclick=function(){showLane('fx');};
   }
   function renderTools(){ document.getElementById('trackTools').style.display = curEl() ? '' : 'none'; }
-  function showLane(key){ var el=curEl(); if(!el){ toast('先选一个元素',true); return; } var s=shownLanes[el.id]||(shownLanes[el.id]={}); s[key]=true; lanesRender(); }
-  function showFxLane(block){ var el=curEl(); if(!el){ toast('先选一个元素',true); return; } var key='fx:'+block; var s=shownLanes[el.id]||(shownLanes[el.id]={}); s[key]=true; if(!segTrackOf(el,key,0,INFO.durationMs)) setSegmentTrack(el,key,0,INFO.durationMs,{kind:'fx',block:block,params:{}}); else lanesRender(); }
+  function showLane(kind){ var el=curEl(); if(!el){ toast('先选一个元素',true); return; } var s=shownLanes[el.id]||(shownLanes[el.id]={}); s[kind]=true; lanesRender(); }
   function setMode(){ document.getElementById('mode').textContent = pending ? ('拖框创建：'+pending) : ''; stage.classList.toggle('drawing', !!pending); }
 
   // ---- 字段编辑 ----
@@ -417,17 +432,15 @@ window.__DATA__ = ${data};
 
   // ---- 泳道：生命 + 轨迹/缩放/特效 ----
   var laneSel = null, laneDrag = null, pick = null, shownLanes = {};
-  function parseKey(key){ var i=key.indexOf(':'); if(i<0) return {kind:key,block:null}; return {kind:key.slice(0,i),block:key.slice(i+1)}; }
-  function trMatch(tr,pk){ return tr.kind===pk.kind && (pk.kind!=='fx'||tr.block===pk.block); }
-  function boundsFor(el,key){
-    var pk=parseKey(key),D=INFO.durationMs,set=[0,D];
-    ((el.cuts&&el.cuts[key])||[]).forEach(function(t){ if(t>0&&t<D) set.push(t); });
-    el.tracks.forEach(function(tr){ if(!trMatch(tr,pk))return; var s=Math.max(0,tr.startMs),e=Math.min(D,tr.startMs+tr.durMs); if(e>0&&s<D){set.push(s);set.push(e);} });
+  function boundsFor(el,kind){
+    var D=INFO.durationMs,set=[0,D];
+    ((el.cuts&&el.cuts[kind])||[]).forEach(function(t){ if(t>0&&t<D) set.push(t); });
+    el.tracks.forEach(function(tr){ if(tr.kind!==kind)return; var s=Math.max(0,tr.startMs),e=Math.min(D,tr.startMs+tr.durMs); if(e>0&&s<D){set.push(s);set.push(e);} });
     set=set.filter(function(t){return t>=0&&t<=D;}).sort(function(a,b){return a-b;});
     return set.filter(function(t,i){return i===0||t!==set[i-1];});
   }
-  function segTrackOf(el,key,s,e){ var pk=parseKey(key); for(var i=0;i<el.tracks.length;i++){var tr=el.tracks[i]; if(!trMatch(tr,pk))continue; if(Math.abs(tr.startMs-s)<0.5&&Math.abs(tr.startMs+tr.durMs-e)<0.5)return tr;} return null; }
-  function colFor(key,type){ if(key==='life')return 'life'; if(key==='scale')return 'scale'; if(key.indexOf('fx:')===0)return 'fx'; return type==='static'?'static':'line'; }
+  function segTrackOf(el,kind,s,e){ for(var i=0;i<el.tracks.length;i++){var tr=el.tracks[i]; if(tr.kind!==kind)continue; if(Math.abs(tr.startMs-s)<0.5&&Math.abs(tr.startMs+tr.durMs-e)<0.5)return tr;} return null; }
+  function colFor(kind,type){ if(kind==='life')return 'life'; if(kind==='scale')return 'scale'; if(kind==='fx'||kind==='bgfx')return (type==='none'||type==='static')?'static':'fx'; return type==='static'?'static':'line'; }
   function pct(t){ return ((t-view.start)/view.span)*100; }
   function laneRow(laneId,label,segs,handles,lifeIn,lifeOut){
     var h='<div class="lane" data-lane="'+laneId+'"><span class="lbl">'+label+'</span>';
@@ -446,28 +459,48 @@ window.__DATA__ = ${data};
     h+='</div>';
     return h;
   }
+  function showMenu(x,y,items,onPick){
+    var m=document.getElementById('ctxmenu');
+    m.innerHTML=items.map(function(it){ return it[1]===''?'<div style="height:1px;background:#3a3a44;margin:3px 0"></div>':'<button data-v="'+it[1]+'">'+it[0]+'</button>';}).join('');
+    m.style.display='block'; m.style.left='-9999px'; m.style.top='-9999px';
+    var mw=m.offsetWidth, mh=m.offsetHeight;
+    var mx=Math.max(4,Math.min(x,window.innerWidth-mw-4));
+    var my=(y+mh>window.innerHeight-4)?(y-mh):y; my=Math.max(4,Math.min(my,window.innerHeight-mh-4));
+    m.style.left=mx+'px'; m.style.top=my+'px';
+    m.querySelectorAll('button').forEach(function(b){ b.onclick=function(){ m.style.display='none'; onPick(b.dataset.v); }; });
+  }
+  function bgBounds(){ var D=INFO.durationMs,set=[0,D]; (SCENE.bgCuts||[]).forEach(function(t){ if(t>0&&t<D)set.push(t); }); (SCENE.bgfx||[]).forEach(function(sg){ set.push(Math.max(0,sg.startMs)); set.push(Math.min(D,sg.endMs)); }); set=set.filter(function(t){return t>=0&&t<=D;}).sort(function(a,b){return a-b;}); return set.filter(function(t,i){return i===0||t!==set[i-1];}); }
+  function bgSegAt(s,e){ var a=SCENE.bgfx||[]; for(var i=0;i<a.length;i++) if(Math.abs(a[i].startMs-s)<0.5&&Math.abs(a[i].endMs-e)<0.5) return a[i]; return null; }
+  function addBgCut(t){ if(t<=1||t>=INFO.durationMs-1)return; var c=SCENE.bgCuts||(SCENE.bgCuts=[]); if(c.some(function(x){return Math.abs(x-t)<1;}))return; c.push(Math.round(t)); c.sort(function(a,b){return a-b;}); dirty=true; }
+  function setBgSeg(s,e,block,params){ if(block!=='none'){ SCENE.bgfx=(SCENE.bgfx||[]).filter(function(sg){return !(Math.abs(sg.startMs-s)<0.5&&Math.abs(sg.endMs-e)<0.5);}); SCENE.bgfx.push({startMs:Math.round(s),endMs:Math.round(e),block:block,params:params||{}}); SCENE.bgfx.sort(function(a,b){return a.startMs-b.startMs;}); } else { SCENE.bgfx=(SCENE.bgfx||[]).filter(function(sg){return !(Math.abs(sg.startMs-s)<0.5&&Math.abs(sg.endMs-e)<0.5);}); } dirty=true; lanesRender(); refreshFrame(); }
+  function delBgSeg(s,e){ SCENE.bgfx=(SCENE.bgfx||[]).filter(function(sg){return !(Math.abs(sg.startMs-s)<0.5&&Math.abs(sg.endMs-e)<0.5);}); dirty=true; lanesRender(); refreshFrame(); }
+  function moveBgBoundary(t,t2){ var c=SCENE.bgCuts||(SCENE.bgCuts=[]); for(var i=0;i<c.length;i++) if(Math.abs(c[i]-t)<0.5) c[i]=Math.round(t2); c.sort(function(a,b){return a-b;}); (SCENE.bgfx||[]).forEach(function(sg){ if(Math.abs(sg.startMs-t)<0.5) sg.startMs=Math.round(t2); else if(Math.abs(sg.endMs-t)<0.5) sg.endMs=Math.round(t2); }); SCENE.bgfx=(SCENE.bgfx||[]).filter(function(sg){return sg.endMs>sg.startMs;}); dirty=true; }
+  function openBgMenu(x,y,s,e){ var items=[['无（清除）','none']]; (BLOCKS.bgfx||[]).forEach(function(f){ items.push([f.name, f.name]); }); items.push(['—','']); items.push(['在播放头打点','cut']); showMenu(x,y,items,function(v){ if(v==='cut'){ addBgCut(ms); lanesRender(); } else if(v==='none'){ delBgSeg(s,e); } else { setBgSeg(s,e,v,{}); } }); }
+
   function lanesRender(){
     var host=document.getElementById('lanes'); var el=curEl();
-    if(!el){ host.innerHTML='<div class="hint" style="padding:3px 0">选中一个元素后，这里显示它的「生命 / 轨迹 / 缩放 / 特效」行</div>'; return; }
     var html='';
-    html+=laneRow('life','生命',[{kind:'life',startMs:el.life.inMs,endMs:el.life.outMs}],[{t:el.life.inMs,side:'in'},{t:el.life.outMs,side:'out'}],el.life.inMs,el.life.outMs);
-    var shown=shownLanes[el.id]||{};
-    var laneDefs=[['move','轨迹'],['scale','缩放']].concat(BLOCKS.fx.map(function(f){return ['fx:'+f.name, f.name];}));
-    laneDefs.forEach(function(def){
-      var key=def[0], label=def[1], pk=parseKey(key);
-      var has=el.tracks.some(function(tr){return trMatch(tr,pk);});
-      if(!shown[key] && !has) return;
-      var b=boundsFor(el,key), segs=[];
-      for(var i=0;i<b.length-1;i++){ var tr=segTrackOf(el,key,b[i],b[i+1]); var type=tr?(pk.kind==='move'?(tr.path||'line'):pk.kind):'static'; segs.push({kind:key,startMs:b[i],endMs:b[i+1],type:type}); }
-      html+=laneRow(key,label,segs,b.slice(1,-1),el.life.inMs,el.life.outMs);
-    });
+    var bgb=bgBounds(), bgs=[];
+    for(var bi=0;bi<bgb.length-1;bi++){ var bsg=bgSegAt(bgb[bi],bgb[bi+1]); bgs.push({kind:'bgfx',startMs:bgb[bi],endMs:bgb[bi+1],type: bsg? bsg.block : 'none'}); }
+    html+=laneRow('bgfx','背景特效',bgs,bgb.slice(1,-1),0,INFO.durationMs);
+    if(el){
+      html+=laneRow('life','生命',[{kind:'life',startMs:el.life.inMs,endMs:el.life.outMs}],[{t:el.life.inMs,side:'in'},{t:el.life.outMs,side:'out'}],el.life.inMs,el.life.outMs);
+      var shown=shownLanes[el.id]||{};
+      ['move','scale','fx'].forEach(function(kind){
+        var has=el.tracks.some(function(tr){return tr.kind===kind;});
+        if(!shown[kind] && !has) return;
+        var b=boundsFor(el,kind), segs=[];
+        for(var i=0;i<b.length-1;i++){ var tr=segTrackOf(el,kind,b[i],b[i+1]); var type=tr?(kind==='move'?(tr.path||'line'):kind):'static'; segs.push({kind:kind,startMs:b[i],endMs:b[i+1],type:type}); }
+        html+=laneRow(kind, kind==='move'?'轨迹':(kind==='scale'?'缩放':'特效'), segs, b.slice(1,-1), el.life.inMs, el.life.outMs);
+      });
+    }
     host.innerHTML=html;
     host.querySelectorAll('.seg').forEach(function(sg){
       sg.addEventListener('mousedown', function(e){ if(e.button!==0)return; var t=timeAt(e); laneSel={kind:sg.dataset.lane,s:Number(sg.dataset.s),e:Number(sg.dataset.e)}; if(sg.dataset.lane!=='life') seek(t); host.querySelectorAll('.seg').forEach(function(x){x.classList.remove('sel');}); sg.classList.add('sel'); renderSegEdit(); });
-      sg.addEventListener('contextmenu', function(e){ e.preventDefault(); e.stopPropagation(); openMenu(e.clientX,e.clientY,el,sg.dataset.lane,Number(sg.dataset.s),Number(sg.dataset.e)); });
+      sg.addEventListener('contextmenu', function(e){ e.preventDefault(); e.stopPropagation(); var k=sg.dataset.lane, s=Number(sg.dataset.s), en=Number(sg.dataset.e); if(k==='bgfx') openBgMenu(e.clientX,e.clientY,s,en); else if(el) openMenu(e.clientX,e.clientY,el,k,s,en); });
     });
     host.querySelectorAll('.lane').forEach(function(row){
-      row.addEventListener('dblclick', function(e){ var kind=row.dataset.lane; if(kind==='life')return; addCut(el,kind,timeAt(e)); lanesRender(); });
+      row.addEventListener('dblclick', function(e){ var kind=row.dataset.lane; if(kind==='life')return; var t=timeAt(e); if(kind==='bgfx') addBgCut(t); else if(el) addCut(el,kind,t); lanesRender(); });
     });
     host.querySelectorAll('.hnd').forEach(function(hn){
       hn.addEventListener('mousedown', function(e){ e.preventDefault(); e.stopPropagation(); laneDrag={ lane:hn.dataset.lane, t:Number(hn.dataset.time), side:hn.dataset.side||null }; });
@@ -476,13 +509,13 @@ window.__DATA__ = ${data};
   }
   function timeAt(e){ var r=document.getElementById('tl').getBoundingClientRect(); return view.start + Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*view.span; }
   function addCut(el,kind,t){ if(t<=1||t>=INFO.durationMs-1)return; var cuts=el.cuts||(el.cuts={move:[],scale:[],fx:[]}); var c=cuts[kind]||(cuts[kind]=[]); if(c.some(function(x){return Math.abs(x-t)<1;}))return; c.push(Math.round(t)); c.sort(function(a,b){return a-b;}); dirty=true; }
-  function setSegmentTrack(el,key,s,e,track){ var pk=parseKey(key); el.tracks=el.tracks.filter(function(tr){return !(trMatch(tr,pk) && Math.abs(tr.startMs-s)<0.5 && Math.abs((tr.startMs+tr.durMs)-e)<0.5);}); el.tracks.push(Object.assign({startMs:Math.round(s),durMs:Math.round(e-s)},track)); el.tracks.sort(function(a,b){return a.startMs-b.startMs;}); dirty=true; lanesRender(); refreshFrame(); }
-  function delSegmentTrack(el,key,s,e){ var pk=parseKey(key); el.tracks=el.tracks.filter(function(tr){return !(trMatch(tr,pk) && Math.abs(tr.startMs-s)<0.5 && Math.abs((tr.startMs+tr.durMs)-e)<0.5);}); dirty=true; lanesRender(); refreshFrame(); }
-  function openMenu(x,y,el,key,s,e){
-    var m=document.getElementById('ctxmenu'), pk=parseKey(key), items;
-    if(pk.kind==='move') items=[['静止','static'],['直线轨迹','line'],['圆形轨迹','orbit'],['在播放头打点','cut'],['—',''],['删除这段行为','del']];
-    else if(pk.kind==='scale') items=[['缩放 1→0.5','scale'],['在播放头打点','cut'],['删除这段行为','del']];
-    else items=[['应用此特效','on'],['在播放头打点','cut'],['删除这段行为','del']];
+  function setSegmentTrack(el,kind,s,e,track){ el.tracks=el.tracks.filter(function(tr){return !(tr.kind===kind && Math.abs(tr.startMs-s)<0.5 && Math.abs((tr.startMs+tr.durMs)-e)<0.5);}); el.tracks.push(Object.assign({startMs:Math.round(s),durMs:Math.round(e-s)},track)); el.tracks.sort(function(a,b){return a.startMs-b.startMs;}); dirty=true; lanesRender(); refreshFrame(); }
+  function delSegmentTrack(el,kind,s,e){ el.tracks=el.tracks.filter(function(tr){return !(tr.kind===kind && Math.abs(tr.startMs-s)<0.5 && Math.abs((tr.startMs+tr.durMs)-e)<0.5);}); dirty=true; lanesRender(); refreshFrame(); }
+  function openMenu(x,y,el,kind,s,e){
+    var m=document.getElementById('ctxmenu'), items;
+    if(kind==='move') items=[['静止','static'],['直线轨迹','line'],['圆形轨迹','orbit'],['在播放头打点','cut'],['—',''],['删除这段行为','del']];
+    else if(kind==='scale') items=[['缩放 1→0.5','scale'],['在播放头打点','cut'],['删除这段行为','del']];
+    else items=[['特效：发光','glow'],['在播放头打点','cut'],['删除这段行为','del']];
     m.innerHTML=items.map(function(it){ return it[1]===''?'<div style="height:1px;background:#3a3a44;margin:3px 0"></div>':'<button data-v="'+it[1]+'">'+it[0]+'</button>';}).join('');
     m.style.display='block'; m.style.left='-9999px'; m.style.top='-9999px';
     var mw=m.offsetWidth, mh=m.offsetHeight;
@@ -490,35 +523,40 @@ window.__DATA__ = ${data};
     var my=(y+mh>window.innerHeight-4)?(y-mh):y;
     my=Math.max(4,Math.min(my,window.innerHeight-mh-4));
     m.style.left=mx+'px'; m.style.top=my+'px';
-    m.querySelectorAll('button').forEach(function(b){ b.onclick=function(){ m.style.display='none'; applyBehavior(el,key,s,e,b.dataset.v); }; });
+    m.querySelectorAll('button').forEach(function(b){ b.onclick=function(){ m.style.display='none'; applyBehavior(el,kind,s,e,b.dataset.v); }; });
   }
   function beginPick(el,s,e,mode){
     seek(s);
     fetch('/resolve?ms='+Math.round(s)).then(function(r){return r.json();}).then(function(d){ var it=d.items.filter(function(x){return x.id===el.id;})[0]; var from=it?{x:Math.round(it.x),y:Math.round(it.y)}:{x:el.at.x,y:el.at.y}; pick={ elId:el.id, s:s, e:e, from:from, mode:mode }; toast(mode==='orbit'?'点画面选「圆心」':'点画面选「终点」'); }).catch(function(){ pick={ elId:el.id, s:s, e:e, from:{x:el.at.x,y:el.at.y}, mode:mode }; toast('点画面选终点/圆心'); });
   }
-  function applyBehavior(el,key,s,e,v){
-    var pk=parseKey(key);
-    if(v==='cut'){ addCut(el,key,ms); lanesRender(); return; }
-    if(v==='static'||v==='del'){ delSegmentTrack(el,key,s,e); return; }
-    if(v==='on'){ setSegmentTrack(el,key,s,e,{kind:'fx',block:pk.block,params:{}}); return; }
+  function applyBehavior(el,kind,s,e,v){
+    if(v==='cut'){ addCut(el,kind,ms); lanesRender(); return; }
+    if(v==='static'||v==='del'){ delSegmentTrack(el,kind,s,e); return; }
     if(v==='line'||v==='orbit'){ beginPick(el,s,e,v); return; }
-    if(v==='scale'){ setSegmentTrack(el,key,s,e,{ kind:'scale', from:(el.at.scale||1), to:0.5, ease:'linear' }); return; }
+    if(v==='scale'){ setSegmentTrack(el,kind,s,e,{ kind:'scale', from:(el.at.scale||1), to:0.5, ease:'linear' }); return; }
+    if(v==='glow'){ setSegmentTrack(el,kind,s,e,{ kind:'fx', block:'glow', params:{} }); return; }
   }
   document.addEventListener('mousedown', function(e){ var m=document.getElementById('ctxmenu'); if(m.style.display==='block' && !m.contains(e.target)) m.style.display='none'; });
-  function moveBoundary(el,key,t,t2){
-    var pk=parseKey(key);
-    var cuts=el.cuts[key]||(el.cuts[key]=[]);
+  function moveBoundary(el,kind,t,t2){
+    var cuts=el.cuts[kind]||(el.cuts[kind]=[]);
     for(var i=0;i<cuts.length;i++) if(Math.abs(cuts[i]-t)<0.5) cuts[i]=Math.round(t2);
     cuts.sort(function(a,b){return a-b;});
-    el.tracks.forEach(function(tr){ if(!trMatch(tr,pk))return; var s=tr.startMs,en=tr.startMs+tr.durMs;
+    el.tracks.forEach(function(tr){ if(tr.kind!==kind)return; var s=tr.startMs,en=tr.startMs+tr.durMs;
       if(Math.abs(s-t)<0.5){ tr.startMs=Math.round(t2); tr.durMs=Math.round(en-t2); }
       else if(Math.abs(en-t)<0.5){ tr.durMs=Math.round(t2-s); } });
     dirty=true;
   }
   document.addEventListener('mousemove', function(e){
     if(!laneDrag) return;
-    var el=curEl(); if(!el){ laneDrag=null; return; }
     var t2=timeAt(e);
+    if(laneDrag.lane==='bgfx'){
+      var bb=bgBounds(), bi=bb.findIndex(function(x){return Math.abs(x-laneDrag.t)<1;});
+      var blo=bi>0?bb[bi-1]+1:1, bhi=(bi>=0&&bi<bb.length-1)?bb[bi+1]-1:INFO.durationMs-1;
+      var bt=Math.max(blo,Math.min(bhi,Math.round(t2)));
+      moveBgBoundary(laneDrag.t,bt); laneDrag.t=bt;
+      lanesRender(); renderProps(); live(); return;
+    }
+    var el=curEl(); if(!el){ laneDrag=null; return; }
     if(laneDrag.lane==='life'){
       var isIn = laneDrag.side==='in';
       var nt=Math.round(t2);
