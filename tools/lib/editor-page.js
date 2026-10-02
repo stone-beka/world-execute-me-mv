@@ -481,7 +481,12 @@ window.__DATA__ = ${data};
     else if(kind==='scale') items=[['缩放 1→0.5','scale'],['在播放头打点','cut'],['删除这段行为','del']];
     else items=[['特效：发光','glow'],['在播放头打点','cut'],['删除这段行为','del']];
     m.innerHTML=items.map(function(it){ return it[1]===''?'<div style="height:1px;background:#3a3a44;margin:3px 0"></div>':'<button data-v="'+it[1]+'">'+it[0]+'</button>';}).join('');
-    m.style.left=x+'px'; m.style.top=y+'px'; m.style.display='block';
+    m.style.display='block'; m.style.left='-9999px'; m.style.top='-9999px';
+    var mw=m.offsetWidth, mh=m.offsetHeight;
+    var mx=Math.max(4,Math.min(x,window.innerWidth-mw-4));
+    var my=(y+mh>window.innerHeight-4)?(y-mh):y;
+    my=Math.max(4,Math.min(my,window.innerHeight-mh-4));
+    m.style.left=mx+'px'; m.style.top=my+'px';
     m.querySelectorAll('button').forEach(function(b){ b.onclick=function(){ m.style.display='none'; applyBehavior(el,kind,s,e,b.dataset.v); }; });
   }
   function beginPick(el,s,e,mode){
