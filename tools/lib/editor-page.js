@@ -31,7 +31,7 @@ export function renderEditorPage({ scene, info, blocks }) {
   #stage{position:relative;display:flex;align-items:center;justify-content:center;padding:10px;background:#060608;min-height:0;cursor:default}
   #stage.drawing{cursor:crosshair}
   #wrap{position:relative;line-height:0}
-  #view{max-width:100%;max-height:100%;display:block;border:1px solid #2a2a30}
+  #view{width:100%;height:100%;object-fit:contain;display:block;border:1px solid #2a2a30}
   #ov{position:absolute;left:0;top:0}
   .sec{margin:10px 0 5px;color:#8b8b93;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
   .sec:first-child{margin-top:0}
@@ -110,6 +110,7 @@ window.__DATA__ = ${data};
 
   var img = document.getElementById('view');
   var ov = document.getElementById('ov');
+  var wrap = document.getElementById('wrap');
   var stage = document.getElementById('stage');
 
   function fmt(t){var s=t/1000,m=Math.floor(s/60),r=s-m*60;return m+':'+(r<10?'0':'')+r.toFixed(2);}
@@ -145,6 +146,15 @@ window.__DATA__ = ${data};
   }
 
   // ---- 覆盖层 ----
+  function fitStage(){
+    var sw = stage.clientWidth - 20, sh = stage.clientHeight - 20;
+    var ar = (INFO.width || 1920) / (INFO.height || 1080);
+    var w = sw, h = w / ar;
+    if (h > sh) { h = sh; w = h * ar; }
+    if (!(w > 40) || !(h > 40)) { w = Math.max(40, sw); h = w / ar; }
+    wrap.style.width = Math.round(w) + 'px';
+    wrap.style.height = Math.round(h) + 'px';
+  }
   function syncSize(){var r=img.getBoundingClientRect();if(!r.width)return false;ov.width=Math.round(r.width);ov.height=Math.round(r.height);ov.style.width=r.width+'px';ov.style.height=r.height+'px';return true;}
   function S(){return { sx: ov.width/INFO.width, sy: ov.height/INFO.height };}
   function drawOverlay() {
@@ -387,7 +397,8 @@ window.__DATA__ = ${data};
   // ---- 保存 ----
   document.getElementById('save').onclick=function(){fetch('/save',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){if(d.ok)toast('已保存 ✓');else toast('保存失败：'+d.error,true);}).catch(function(e){toast('保存失败：'+e.message,true);});};
 
-  renderPalette(); tlRender(); setMode(); rebuild();
+  renderPalette(); fitStage(); tlRender(); setMode(); rebuild();
+  window.addEventListener('resize', function(){ fitStage(); drawOverlay(); });
 })();
 </script>
 </body></html>`;
