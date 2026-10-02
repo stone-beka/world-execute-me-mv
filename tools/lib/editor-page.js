@@ -58,6 +58,7 @@ export function renderEditorPage({ scene, info, blocks }) {
   .lane .seg.scale{background:#2440c8}
   .lane .seg.fx{background:#6b3f9e}
   .lane .seg.life{background:linear-gradient(90deg,#39ff8866,#ff3b5c66)}
+  .lane .dark{position:absolute;top:0;height:100%;background:#000000aa;pointer-events:none;z-index:2}
   .lane .seg.sel{outline:2px solid #ff6070;outline-offset:-2px}
   .lane .hnd{position:absolute;top:-2px;width:7px;height:24px;margin-left:-3px;cursor:ew-resize;z-index:4;background:#8b8b93;border-radius:2px;opacity:.85}
   .lane .hnd.life{background:#ff6070}
@@ -417,16 +418,16 @@ window.__DATA__ = ${data};
   // ---- 泳道：生命 + 轨迹/缩放/特效 ----
   var laneSel = null, laneDrag = null, pick = null, shownLanes = {};
   function boundsFor(el,kind){
-    var inMs=el.life.inMs,outMs=el.life.outMs,set=[inMs,outMs];
-    ((el.cuts&&el.cuts[kind])||[]).forEach(function(t){ if(t>inMs&&t<outMs) set.push(t); });
-    el.tracks.forEach(function(tr){ if(tr.kind!==kind)return; var s=Math.max(inMs,tr.startMs),e=Math.min(outMs,tr.startMs+tr.durMs); if(e>inMs&&s<outMs){set.push(s);set.push(e);} });
-    set=set.filter(function(t){return t>=inMs&&t<=outMs;}).sort(function(a,b){return a-b;});
+    var D=INFO.durationMs,set=[0,D];
+    ((el.cuts&&el.cuts[kind])||[]).forEach(function(t){ if(t>0&&t<D) set.push(t); });
+    el.tracks.forEach(function(tr){ if(tr.kind!==kind)return; var s=Math.max(0,tr.startMs),e=Math.min(D,tr.startMs+tr.durMs); if(e>0&&s<D){set.push(s);set.push(e);} });
+    set=set.filter(function(t){return t>=0&&t<=D;}).sort(function(a,b){return a-b;});
     return set.filter(function(t,i){return i===0||t!==set[i-1];});
   }
   function segTrackOf(el,kind,s,e){ for(var i=0;i<el.tracks.length;i++){var tr=el.tracks[i]; if(tr.kind!==kind)continue; if(Math.abs(tr.startMs-s)<0.5&&Math.abs(tr.startMs+tr.durMs-e)<0.5)return tr;} return null; }
   function colFor(kind,type){ if(kind==='life')return 'life'; if(kind==='scale')return 'scale'; if(kind==='fx')return 'fx'; return type==='static'?'static':'line'; }
   function pct(t){ return ((t-view.start)/view.span)*100; }
-  function laneRow(laneId,label,segs,handles){
+  function laneRow(laneId,label,segs,handles,lifeIn,lifeOut){
     var h='<div class="lane" data-lane="'+laneId+'"><span class="lbl">'+label+'</span>';
     segs.forEach(function(sg){
       var l=pct(sg.startMs), w=((sg.endMs-sg.startMs)/view.span)*100;
@@ -435,6 +436,10 @@ window.__DATA__ = ${data};
       var sel=(laneSel&&laneSel.kind===sg.kind&&Math.abs(laneSel.s-sg.startMs)<0.5&&Math.abs(laneSel.e-sg.endMs)<0.5)?' sel':'';
       h+='<div class="seg '+colFor(sg.kind,sg.type)+sel+'" data-lane="'+laneId+'" data-s="'+sg.startMs+'" data-e="'+sg.endMs+'" style="left:'+cl+'%;width:'+cw+'%"></div>';
     });
+    if(laneId!=='life'){
+      var a=Math.max(0,Math.min(100,pct(lifeIn))), b=Math.max(0,Math.min(100,pct(lifeOut)));
+      h+='<div class="dark" style="left:0;width:'+a+'%"></div><div class="dark" style="left:'+b+'%;width:'+(100-b)+'%"></div>';
+    }
     (handles||[]).forEach(function(hd){ var t=(hd&&hd.t!=null)?hd.t:hd; var side=(hd&&hd.side)?(' data-side="'+hd.side+'"'):''; var l=pct(t); if(l<-1||l>101)return; h+='<div class="hnd'+(laneId==='life'?' life':'')+'" data-lane="'+laneId+'" data-time="'+t+'"'+side+' style="left:'+l+'%"></div>'; });
     h+='</div>';
     return h;
@@ -443,14 +448,14 @@ window.__DATA__ = ${data};
     var host=document.getElementById('lanes'); var el=curEl();
     if(!el){ host.innerHTML='<div class="hint" style="padding:3px 0">选中一个元素后，这里显示它的「生命 / 轨迹 / 缩放 / 特效」行</div>'; return; }
     var html='';
-    html+=laneRow('life','生命',[{kind:'life',startMs:el.life.inMs,endMs:el.life.outMs}],[{t:el.life.inMs,side:'in'},{t:el.life.outMs,side:'out'}]);
+    html+=laneRow('life','生命',[{kind:'life',startMs:el.life.inMs,endMs:el.life.outMs}],[{t:el.life.inMs,side:'in'},{t:el.life.outMs,side:'out'}],el.life.inMs,el.life.outMs);
     var shown=shownLanes[el.id]||{};
     ['move','scale','fx'].forEach(function(kind){
       var has=el.tracks.some(function(tr){return tr.kind===kind;});
       if(!shown[kind] && !has) return;
       var b=boundsFor(el,kind), segs=[];
       for(var i=0;i<b.length-1;i++){ var tr=segTrackOf(el,kind,b[i],b[i+1]); var type=tr?(kind==='move'?(tr.path||'line'):kind):'static'; segs.push({kind:kind,startMs:b[i],endMs:b[i+1],type:type}); }
-      html+=laneRow(kind, kind==='move'?'轨迹':(kind==='scale'?'缩放':'特效'), segs, b.slice(1,-1));
+      html+=laneRow(kind, kind==='move'?'轨迹':(kind==='scale'?'缩放':'特效'), segs, b.slice(1,-1), el.life.inMs, el.life.outMs);
     });
     host.innerHTML=html;
     host.querySelectorAll('.seg').forEach(function(sg){
@@ -465,7 +470,7 @@ window.__DATA__ = ${data};
     });
   }
   function timeAt(e){ var r=document.getElementById('tl').getBoundingClientRect(); return view.start + Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*view.span; }
-  function addCut(el,kind,t){ if(t<=el.life.inMs+1||t>=el.life.outMs-1)return; var cuts=el.cuts||(el.cuts={move:[],scale:[],fx:[]}); var c=cuts[kind]||(cuts[kind]=[]); if(c.some(function(x){return Math.abs(x-t)<1;}))return; c.push(Math.round(t)); c.sort(function(a,b){return a-b;}); dirty=true; }
+  function addCut(el,kind,t){ if(t<=1||t>=INFO.durationMs-1)return; var cuts=el.cuts||(el.cuts={move:[],scale:[],fx:[]}); var c=cuts[kind]||(cuts[kind]=[]); if(c.some(function(x){return Math.abs(x-t)<1;}))return; c.push(Math.round(t)); c.sort(function(a,b){return a-b;}); dirty=true; }
   function setSegmentTrack(el,kind,s,e,track){ el.tracks=el.tracks.filter(function(tr){return !(tr.kind===kind && Math.abs(tr.startMs-s)<0.5 && Math.abs((tr.startMs+tr.durMs)-e)<0.5);}); el.tracks.push(Object.assign({startMs:Math.round(s),durMs:Math.round(e-s)},track)); el.tracks.sort(function(a,b){return a.startMs-b.startMs;}); dirty=true; lanesRender(); refreshFrame(); }
   function delSegmentTrack(el,kind,s,e){ el.tracks=el.tracks.filter(function(tr){return !(tr.kind===kind && Math.abs(tr.startMs-s)<0.5 && Math.abs((tr.startMs+tr.durMs)-e)<0.5);}); dirty=true; lanesRender(); refreshFrame(); }
   function openMenu(x,y,el,kind,s,e){
@@ -498,19 +503,11 @@ window.__DATA__ = ${data};
       else if(Math.abs(en-t)<0.5){ tr.durMs=Math.round(t2-s); } });
     dirty=true;
   }
-  function clampToLife(el){
-    el.cuts=el.cuts||{move:[],scale:[],fx:[]};
-    ['move','scale','fx'].forEach(function(kind){ el.cuts[kind]=(el.cuts[kind]||[]).filter(function(t){return t>el.life.inMs&&t<el.life.outMs;}); });
-    el.tracks.forEach(function(tr){ var s=Math.max(el.life.inMs,tr.startMs),e=Math.min(el.life.outMs,tr.startMs+tr.durMs); tr.startMs=s; tr.durMs=Math.max(1,e-s); });
-    el.tracks=el.tracks.filter(function(tr){return tr.durMs>1 && tr.startMs>=el.life.inMs-1 && tr.startMs<el.life.outMs;});
-  }
   document.addEventListener('mousemove', function(e){
     if(!laneDrag) return;
     var el=curEl(); if(!el){ laneDrag=null; return; }
     var t2=timeAt(e);
     if(laneDrag.lane==='life'){
-      var hasLanes = el.tracks.length>0 || ['move','scale','fx'].some(function(k){return ((el.cuts&&el.cuts[k])||[]).length>0;});
-      if(hasLanes){ toast('请先清空该元素的轨迹/缩放/特效行，再改生命端点',true); return; }
       var isIn = laneDrag.side==='in';
       var nt=Math.round(t2);
       if(isIn){ el.life.inMs=Math.max(0,Math.min(el.life.outMs-1,nt)); laneDrag.t=el.life.inMs; }

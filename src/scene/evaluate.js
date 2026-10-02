@@ -21,6 +21,7 @@ export function resolveElement(el, ms) {
 
   for (const seg of el.tracks) {
     if (ms < seg.startMs) break; // tracks 已按 startMs 升序
+    if (seg.startMs + seg.durMs <= life.inMs) continue; // 整段在生命之前 → 不参与计算
     const p = seg.durMs <= 0 ? 1 : clamp01((ms - seg.startMs) / seg.durMs);
     const e = easeFn(seg.ease)(p);
     if (seg.kind === "fx") {

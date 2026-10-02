@@ -103,13 +103,13 @@ test("normalizeScene 浅拷贝 params，不与入参别名", () => {
   assert.equal(s.elements[0].params.w, 10);
 });
 
-test("cuts 只保留生命区间内、去重、升序", () => {
+test("cuts 只保留场景内、去重、升序", () => {
   const s = normalizeScene({
     id: "t",
     durationMs: 1000,
-    elements: [{ id: "a", block: "rect", at: { x: 0, y: 0 }, life: { inMs: 100, outMs: 900 }, cuts: { move: [500, 200, 500, 50, 950] } }],
+    elements: [{ id: "a", block: "rect", at: { x: 0, y: 0 }, life: { inMs: 100, outMs: 900 }, cuts: { move: [500, 200, 500, 50, 950, 1200] } }],
   });
-  assert.deepEqual(s.elements[0].cuts.move, [200, 500]);
+  assert.deepEqual(s.elements[0].cuts.move, [50, 200, 500, 950]);
   assert.deepEqual(s.elements[0].cuts.scale, []);
 });
 

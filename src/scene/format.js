@@ -76,7 +76,7 @@ function normalizeElement(el, i, durationMs, seen) {
       const arr = Array.isArray(el.cuts[k]) ? el.cuts[k] : [];
       const seenCut = new Set();
       cuts[k] = arr
-        .filter((v) => Number.isFinite(v) && v > inMs && v < outMs)
+        .filter((v) => Number.isFinite(v) && v > 0 && v < durationMs)
         .sort((a, b) => a - b)
         .filter((v) => (seenCut.has(v) ? false : (seenCut.add(v), true)));
     }
