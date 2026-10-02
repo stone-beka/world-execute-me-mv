@@ -9,7 +9,9 @@
   },
   "scripts": {
     "smoke": "node tools/smoke.js",
+    "test": "node --test",
     "preview": "node tools/preview.js",
+    "scene": "node tools/scene.js",
     "probe:audio": "node tools/probe-audio.js",
     "beat:check": "node tools/beat-check.js",
     "detect:onsets": "node tools/onset-detect.js",

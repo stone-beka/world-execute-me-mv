@@ -1,0 +1,40 @@
+{
+  "id": "p0-demo",
+  "title": "P0 样张：JSON → 画面",
+  "durationMs": 8000,
+  "background": "#05070a",
+  "elements": [
+    {
+      "id": "box",
+      "block": "rect",
+      "params": { "w": 180, "h": 110, "radius": 14, "fill": "#39ff88" },
+      "at": { "x": 200, "y": 300, "alpha": 0.9 },
+      "life": { "inMs": 0, "outMs": 8000, "fadeInMs": 200, "fadeOutMs": 300 },
+      "tracks": [
+        { "kind": "move", "path": "line", "from": { "x": 200, "y": 300 }, "to": { "x": 1600, "y": 300 }, "startMs": 500, "durMs": 2000, "ease": "inout" },
+        { "kind": "scale", "from": 1, "to": 0.5, "startMs": 3000, "durMs": 1200, "ease": "out" }
+      ],
+      "notes": "方块从左滑到右然后缩小；证明轨迹+缩放"
+    },
+    {
+      "id": "label",
+      "block": "text",
+      "params": { "text": "world.execute(me);", "size": 56, "color": "#c8f0e8", "weight": 600 },
+      "at": { "x": 960, "y": 640 },
+      "life": { "inMs": 1500, "outMs": 6000, "fadeInMs": 400, "fadeOutMs": 400 },
+      "notes": "标题句，淡入淡出"
+    },
+    {
+      "id": "heart",
+      "block": "wireHeart",
+      "params": { "size": 200 },
+      "at": { "x": 1160, "y": 300 },
+      "life": { "inMs": 1000, "outMs": 7000, "fadeInMs": 300, "fadeOutMs": 300 },
+      "tracks": [
+        { "kind": "move", "path": "orbit", "from": { "x": 1160, "y": 300 }, "center": { "x": 960, "y": 300 }, "sweep": 360, "startMs": 1000, "durMs": 5000, "ease": "linear" },
+        { "kind": "fx", "block": "glow", "startMs": 1000, "durMs": 5000, "params": { "radius": 10 } }
+      ],
+      "notes": "爱心绕标题转圈，全程带辉光；证明环绕轨迹+特效包裹"
+    }
+  ]
+}
