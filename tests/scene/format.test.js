@@ -102,3 +102,23 @@ test("normalizeScene 浅拷贝 params，不与入参别名", () => {
   params.w = 999;
   assert.equal(s.elements[0].params.w, 10);
 });
+
+test("boards-only 场景合法（elements 可为空）", () => {
+  const s = normalizeScene({ id: "t", durationMs: 1000, boards: ["shot-01", "shot-02"] });
+  assert.deepEqual(s.boards, ["shot-01", "shot-02"]);
+  assert.deepEqual(s.elements, []);
+});
+
+test("boards 元素必须是字符串", () => {
+  assert.throws(
+    () => normalizeScene({ id: "t", durationMs: 1000, boards: ["ok", 123] }),
+    /boards\[1\]/,
+  );
+});
+
+test("elements 与 boards 都空报错", () => {
+  assert.throws(
+    () => normalizeScene({ id: "t", durationMs: 1000, elements: [] }),
+    /至少要有一个/,
+  );
+});
