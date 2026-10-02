@@ -47,13 +47,13 @@ export function createEditorServer({ scenePath, scene, info, blocks, page, onSce
       return;
     }
     const json = (code, obj) => {
-      res.writeHead(code, { "content-type": "application/json; charset=utf-8" });
+      res.writeHead(code, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
       res.end(JSON.stringify(obj));
     };
 
     try {
       if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
-        res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+        res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
         res.end(page);
         return;
       }

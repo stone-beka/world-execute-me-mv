@@ -24,13 +24,13 @@ export function createSceneServer({ scene, info, page }) {
     }
 
     if (url.pathname === "/" || url.pathname === "/index.html") {
-      res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+      res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
       res.end(page);
       return;
     }
 
     if (url.pathname === "/info") {
-      res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
+      res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
       res.end(JSON.stringify(info));
       return;
     }

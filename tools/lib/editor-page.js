@@ -28,7 +28,8 @@ export function renderEditorPage({ scene, info, blocks }) {
   .col{min-height:0;overflow:auto;padding:10px}
   .left{border-right:1px solid #2a2a30}
   .right{border-left:1px solid #2a2a30}
-  #stage{position:relative;display:flex;align-items:center;justify-content:center;padding:10px;background:#060608;min-height:0;cursor:crosshair}
+  #stage{position:relative;display:flex;align-items:center;justify-content:center;padding:10px;background:#060608;min-height:0;cursor:default}
+  #stage.drawing{cursor:crosshair}
   #wrap{position:relative;line-height:0}
   #view{max-width:100%;max-height:100%;display:block;border:1px solid #2a2a30}
   #ov{position:absolute;left:0;top:0}
@@ -291,7 +292,7 @@ window.__DATA__ = ${data};
     document.getElementById('tm-fx').onclick=function(){addTrack('fx');};
   }
   function renderTools(){ document.getElementById('trackTools').style.display = curEl() ? '' : 'none'; }
-  function setMode(){ document.getElementById('mode').textContent = pending ? ('拖框创建：'+pending) : ''; }
+  function setMode(){ document.getElementById('mode').textContent = pending ? ('拖框创建：'+pending) : ''; stage.classList.toggle('drawing', !!pending); }
 
   // ---- 字段编辑 ----
   document.addEventListener('change', function(e){
@@ -303,7 +304,7 @@ window.__DATA__ = ${data};
 
   // ---- 刷新 ----
   function refreshResolve(cb){fetch('/resolve?ms='+Math.round(ms)).then(function(r){return r.json();}).then(function(d){resolved=d.items;if(cb)cb();}).catch(function(){});}
-  function syncScene(cb){ if(!dirty){cb();return;} fetch('/working',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){ if(d.ok)dirty=false; cb(); }).catch(function(){cb();}); }
+  function syncScene(cb){ if(!dirty){cb();return;} fetch('/working',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){ if(d.ok)dirty=false; else toast('同步失败：'+(d.error||'未知'),true); cb(); }).catch(function(){cb();}); }
   function refreshFrame(){ syncScene(function(){ img.src='/frame?ms='+Math.round(ms); document.getElementById('tlabel').textContent=fmt(ms); var s=currentSection(ms),l=currentLyric(ms); document.getElementById('seclabel').textContent=s?s.name:'—'; document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）'; refreshResolve(drawOverlay); }); }
   function rebuild(){renderProps();renderTracks();renderTools();refreshFrame();}
 

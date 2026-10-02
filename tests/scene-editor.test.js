@@ -87,6 +87,7 @@ test("POST /save 写入文件", async () => {
 
 test("POST /working 更新内存工作场景但不落盘", async () => {
   const before = readFileSync(scenePath, "utf8");
+  const frameBefore = Buffer.from(await (await fetch(`${base}/frame?ms=0`)).arrayBuffer());
   const next = JSON.parse(JSON.stringify(scene));
   next.elements.push({
     id: "b",
@@ -107,6 +108,8 @@ test("POST /working 更新内存工作场景但不落盘", async () => {
   assert.equal(readFileSync(scenePath, "utf8"), before, "工作场景更新不应落盘");
   const d = await (await fetch(`${base}/resolve?ms=0`)).json();
   assert.ok(d.items.find((x) => x.id === "b"), "工作场景应含新元素 b");
+  const frameAfter = Buffer.from(await (await fetch(`${base}/frame?ms=0`)).arrayBuffer());
+  assert.ok(!frameBefore.equals(frameAfter), "工作场景变化应反映到 /frame 像素");
 });
 
 test("POST /save 非法场景返回 400 且不改文件", async () => {
