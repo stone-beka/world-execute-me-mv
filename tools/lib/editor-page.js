@@ -220,7 +220,7 @@ window.__DATA__ = ${data};
   function createFromBox(block, x0,y0,x1,y1){
     var b={ x:Math.min(x0,x1), y:Math.min(y0,y1), w:Math.abs(x1-x0), h:Math.abs(y1-y0) };
     var el={ id:uid(block), block:block, params:defaultParams(block), at:{x:Math.round(b.x+b.w/2),y:Math.round(b.y+b.h/2),scale:1,rot:0,alpha:1},
-             life:{inMs:0,outMs:SCENE.durationMs,fadeInMs:200,fadeOutMs:200}, tracks:[], z:0, notes:'' };
+             life:{inMs:0,outMs:SCENE.durationMs,fadeInMs:0,fadeOutMs:0}, tracks:[], z:0, notes:'' };
     applyBox(el, b);
     SCENE.elements.push(el); sel=el.id; renderProps(); renderTracks(); renderTools(); refreshFrame();
   }
