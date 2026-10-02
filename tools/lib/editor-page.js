@@ -103,7 +103,7 @@ window.__DATA__ = ${data};
   var D = window.__DATA__;
   var SCENE = D.scene, INFO = D.info, BLOCKS = D.blocks;
   var fps = INFO.fps || 60;
-  var ms = 0, sel = null, resolved = [], drag = null, resize = null, box = null, pending = null, timer = null, dirty = false;
+  var ms = 0, sel = null, resolved = [], drag = null, resize = null, box = null, pending = null, timer = null, dirty = false, frameSeq = 0;
 
   var img = document.getElementById('view');
   var ov = document.getElementById('ov');
@@ -306,7 +306,7 @@ window.__DATA__ = ${data};
   // ---- 刷新 ----
   function refreshResolve(cb){fetch('/resolve?ms='+Math.round(ms)).then(function(r){return r.json();}).then(function(d){resolved=d.items;if(cb)cb();}).catch(function(){});}
   function syncScene(cb){ if(!dirty){cb();return;} fetch('/working',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){ if(d.ok)dirty=false; else toast('同步失败：'+(d.error||'未知'),true); cb(); }).catch(function(){cb();}); }
-  function refreshFrame(){ syncScene(function(){ img.src='/frame?ms='+Math.round(ms); document.getElementById('tlabel').textContent=fmt(ms); var s=currentSection(ms),l=currentLyric(ms); document.getElementById('seclabel').textContent=s?s.name:'—'; document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）'; refreshResolve(drawOverlay); }); }
+  function refreshFrame(){ syncScene(function(){ img.src='/frame?ms='+Math.round(ms)+'&t='+(++frameSeq); document.getElementById('tlabel').textContent=fmt(ms); var s=currentSection(ms),l=currentLyric(ms); document.getElementById('seclabel').textContent=s?s.name:'—'; document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）'; refreshResolve(drawOverlay); }); }
   function rebuild(){renderProps();renderTracks();renderTools();refreshFrame();}
 
   // ---- 时间轴 ----
