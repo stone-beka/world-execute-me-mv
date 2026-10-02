@@ -12,6 +12,10 @@ const MANIFEST = [
   "./blocks/track.move.js",
   "./blocks/track.scale.js",
   "./blocks/fx.glow.js",
+  "./blocks/fx.fragment.js",
+  "./blocks/fx.dissolve.js",
+  "./blocks/fx.tint.js",
+  "./blocks/fx.blink.js",
 ];
 
 const elements = new Map();
