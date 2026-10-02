@@ -24,7 +24,7 @@ export function renderEditorPage({ scene, info, blocks }) {
   button.x{background:#3a1a22;color:#ff9aa8}
   button.on{outline:2px solid #39ff88}
   .grow{flex:1}
-  main{display:grid;grid-template-columns:180px 1fr 300px;flex:1 1 auto;min-height:0}
+  main{display:grid;grid-template-columns:180px minmax(260px,1fr) 300px;flex:1 1 auto;min-height:0;overflow:auto}
   .col{min-height:0;overflow:auto;padding:10px}
   .left{border-right:1px solid #2a2a30}
   .right{border-left:1px solid #2a2a30}
@@ -137,7 +137,7 @@ window.__DATA__ = ${data};
     el.at.x=Math.round(b.x+w/2); el.at.y=Math.round(b.y+h/2);
     var p=el.params||(el.params={});
     if (el.block==='rect'){p.w=Math.round(w);p.h=Math.round(h);}
-    else if (el.block==='text'){p.width=Math.round(w);}
+    else if (el.block==='text'){p.width=Math.round(w);p.height=Math.round(h);}
     else if (el.block==='wireHeart'){p.size=Math.round(Math.min(w,h));}
     else { if('w' in p)p.w=Math.round(w); if('h' in p)p.h=Math.round(h); if('size' in p)p.size=Math.round(Math.min(w,h)); }
   }
@@ -175,7 +175,8 @@ window.__DATA__ = ${data};
       ctx.save();ctx.strokeStyle='#39ff88';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.strokeRect(x0,y0,w,h);ctx.fillStyle='rgba(57,255,136,.10)';ctx.fillRect(x0,y0,w,h);ctx.restore();
     }
   }
-  function toCanvas(cx,cy){var r=img.getBoundingClientRect();return {x:(cx-r.left)/r.width*INFO.width,y:(cy-r.top)/r.height*INFO.height};}
+  function toCanvas(cx,cy){var r=img.getBoundingClientRect();if(!r.width||!r.height)return null;var x=(cx-r.left)/r.width*INFO.width,y=(cy-r.top)/r.height*INFO.height;return {x:Math.max(0,Math.min(INFO.width,x)),y:Math.max(0,Math.min(INFO.height,y))};}
+  function pt(e){return toCanvas(e.clientX,e.clientY);}
   function hitTest(x,y){
     var hits=resolved.filter(function(it){if(!it.visible)return false;var hw=it.size&&it.size.w?it.size.w*it.scale/2:40,hh=it.size&&it.size.h?it.size.h*it.scale/2:40;return x>=it.x-hw&&x<=it.x+hw&&y>=it.y-hh&&y<=it.y+hh;});
     hits.sort(function(a,b){return (a.z||0)-(b.z||0);});return hits.length?hits[hits.length-1].id:null;
@@ -190,7 +191,7 @@ window.__DATA__ = ${data};
 
   // ---- 创建 / 选中 / 拖动 / 缩放 ----
   stage.addEventListener('mousedown', function(e){
-    var c=toCanvas(e.clientX,e.clientY);
+    var c=pt(e); if(!c) return;
     if(pending){ box={ block:pending, x0:c.x,y0:c.y,x1:c.x,y1:c.y }; drawOverlay(); return; }
     var hk=handleAt(c.x,c.y);
     if(hk){ var b=elementBox(curEl()); resize={ id:sel, corner:hk, box:b, fixed: fixedCorner(b,hk) }; return; }
@@ -201,7 +202,7 @@ window.__DATA__ = ${data};
   function fixedCorner(b,k){ return { tl:{x:b.x+b.w,y:b.y+b.h}, tr:{x:b.x,y:b.y+b.h}, bl:{x:b.x+b.w,y:b.y}, br:{x:b.x,y:b.y} }[k]; }
   document.addEventListener('mousemove', function(e){
     if(!ov.width)return;
-    var c=toCanvas(e.clientX,e.clientY);
+    var c=pt(e); if(!c)return;
     if(box){ box.x1=c.x; box.y1=c.y; drawOverlay(); return; }
     if(resize){ var el=byId(resize.id); if(!el)return; var fx=resize.fixed.x, fy=resize.fixed.y;
       resize.box={ x:Math.min(fx,c.x), y:Math.min(fy,c.y), w:Math.abs(c.x-fx), h:Math.abs(c.y-fy) };
