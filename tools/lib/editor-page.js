@@ -100,8 +100,8 @@ export function renderEditorPage({ scene, info, blocks }) {
   <div class="col right">
     <div class="sec">属性</div>
     <div id="props"><div class="hint">（选一个元素）</div></div>
-    <div class="sec">轨迹 / 特效</div>
-    <div id="tracks"><div class="hint">（未选中）</div></div>
+    <div class="sec">所选段</div>
+    <div id="segedit"><div class="hint">（在泳道里点一段）</div></div>
   </div>
 </main>
 <footer>
@@ -222,7 +222,7 @@ window.__DATA__ = ${data};
   // ---- 创建 / 选中 / 拖动 / 缩放 ----
   stage.addEventListener('mousedown', function(e){
     var c=pt(e); if(!c) return;
-    if(pick){ var pel=byId(pick.elId); if(pel) setSegmentTrack(pel,'move',pick.s,pick.e,{kind:'move',path:'line',from:pick.from,to:{x:Math.round(c.x),y:Math.round(c.y)},ease:'linear'}); pick=null; return; }
+    if(pick){ var pel=byId(pick.elId); if(pel){ var cxp=Math.round(c.x),cyp=Math.round(c.y); if(pick.mode==='orbit') setSegmentTrack(pel,'move',pick.s,pick.e,{kind:'move',path:'orbit',from:pick.from,center:{x:cxp,y:cyp},sweep:360,ease:'linear'}); else setSegmentTrack(pel,'move',pick.s,pick.e,{kind:'move',path:'line',from:pick.from,to:{x:cxp,y:cyp},ease:'linear'}); } pick=null; return; }
     if(pending){ box={ block:pending, x0:c.x,y0:c.y,x1:c.x,y1:c.y }; drawOverlay(); return; }
     var hk=handleAt(c.x,c.y);
     if(hk){ var b=elementBox(curEl()); resize={ id:sel, corner:hk, box:b, fixed: fixedCorner(b,hk) }; return; }
@@ -290,33 +290,34 @@ window.__DATA__ = ${data};
     if(de)de.onclick=function(){SCENE.elements=SCENE.elements.filter(function(x){return x.id!==el.id;});sel=null;dirty=true;rebuildPanels();refreshFrame();};
   }
   function fxSchema(n){for(var i=0;i<BLOCKS.fx.length;i++)if(BLOCKS.fx[i].name===n)return BLOCKS.fx[i];return null;}
-  function renderTracks(){
-    var c=document.getElementById('tracks'),el=curEl();
-    if(!el){c.innerHTML='<div class="hint">（未选中）</div>';return;}
-    var h='';
-    el.tracks.forEach(function(tr,i){
-      h+='<div class="track"><div class="h"><b>'+(tr.kind==='fx'?('fx:'+tr.block):tr.kind)+'</b><span class="grow"></span><button class="sm x" data-del-tr="'+i+'">删</button></div>';
-      if(tr.kind==='move'){
-        h+='<div class="row"><label>path</label><select data-el="'+el.id+'" data-ti="'+i+'" data-f="path">'+['line','orbit','curve'].map(function(x){return '<option value="'+x+'"'+(tr.path===x?' selected':'')+'>'+x+'</option>';}).join('')+'</select></div>';
-        h+=numRow('from.x',el.id,'from.x',tr.from?tr.from.x:0,i)+numRow('from.y',el.id,'from.y',tr.from?tr.from.y:0,i)+numRow('to.x',el.id,'to.x',tr.to?tr.to.x:0,i)+numRow('to.y',el.id,'to.y',tr.to?tr.to.y:0,i);
-        if(tr.path==='orbit'){h+=numRow('center.x',el.id,'center.x',tr.center?tr.center.x:0,i)+numRow('center.y',el.id,'center.y',tr.center?tr.center.y:0,i)+numRow('sweep',el.id,'sweep',tr.sweep!=null?tr.sweep:360,i);}
-        if(tr.path==='curve'){h+=numRow('via.x',el.id,'via.x',tr.via?tr.via.x:0,i)+numRow('via.y',el.id,'via.y',tr.via?tr.via.y:0,i);}
-      }
-      if(tr.kind==='scale'){h+=numRow('from',el.id,'from',tr.from,i)+numRow('to',el.id,'to',tr.to,i);}
-      h+=numRow('startMs',el.id,'startMs',tr.startMs,i)+numRow('durMs',el.id,'durMs',tr.durMs,i);
-      if(tr.kind!=='fx')h+='<div class="row"><label>ease</label><select data-el="'+el.id+'" data-ti="'+i+'" data-f="ease">'+['linear','in','out','inout','quint','expo','back'].map(function(e){return '<option value="'+e+'"'+(tr.ease===e?' selected':'')+'>'+e+'</option>';}).join('')+'</select></div>';
-      if(tr.kind==='fx'){var s=fxSchema(tr.block);if(s)h+=paramRows({id:el.id,params:tr.params},s,i);}
-      h+='</div>';
-    });
-    c.innerHTML=h||'<div class="hint">（无轨迹）</div>';
-    c.querySelectorAll('[data-del-tr]').forEach(function(b){b.onclick=function(){el.tracks.splice(Number(b.dataset.delTr),1);dirty=true;renderTracks();refreshFrame();};});
-  }
-  function addTrack(kind,path){
-    var el=curEl();if(!el){toast('先选一个元素',true);return;}
-    if(kind==='move')el.tracks.push({kind:'move',path:path,from:{x:el.at.x,y:el.at.y},to:{x:el.at.x+300,y:el.at.y},center:{x:el.at.x+150,y:el.at.y+120},via:{x:el.at.x+150,y:el.at.y-160},sweep:360,startMs:Math.round(ms),durMs:1000,ease:'linear'});
-    else if(kind==='scale')el.tracks.push({kind:'scale',from:1,to:0.5,startMs:Math.round(ms),durMs:1000,ease:'linear'});
-    else if(kind==='fx')el.tracks.push({kind:'fx',block:(BLOCKS.fx[0]&&BLOCKS.fx[0].name)||'glow',startMs:Math.round(ms),durMs:1000,params:{}});
-    dirty=true; renderTracks(); refreshFrame();
+  function segNum(label,key,val){ return '<div class="row"><label>'+label+'</label><input type="number" step="any" data-segf="'+key+'" value="'+val+'"></div>'; }
+  function renderSegEdit(){
+    var host=document.getElementById('segedit'), el=curEl();
+    if(!el || !laneSel || laneSel.kind==='life'){ host.innerHTML='<div class="hint">（在泳道里点一段）</div>'; return; }
+    var kind=laneSel.kind, s=laneSel.s, e=laneSel.e;
+    var tr=segTrackOf(el,kind,s,e);
+    var h='<div class="hint">'+kind+' · '+fmt(s)+' → '+fmt(e)+'</div>';
+    if(!tr){ host.innerHTML=h+'<div class="hint">静止 / 无动作。右键该段选择行为。</div>'; return; }
+    if(kind==='move'){
+      h+='<div class="row"><label>轨迹</label><select data-segf="path"><option value="line"'+(tr.path==='line'?' selected':'')+'>直线</option><option value="orbit"'+(tr.path==='orbit'?' selected':'')+'>圆形</option></select></div>';
+      if(tr.path==='orbit'){ h+=segNum('center.x',tr.center?tr.center.x:0)+segNum('center.y',tr.center?tr.center.y:0)+segNum('sweep',tr.sweep!=null?tr.sweep:360); }
+      else { h+=segNum('from.x',tr.from?tr.from.x:0)+segNum('from.y',tr.from?tr.from.y:0)+segNum('to.x',tr.to?tr.to.x:0)+segNum('to.y',tr.to?tr.to.y:0); }
+    } else if(kind==='scale'){
+      h+=segNum('from',tr.from)+segNum('to',tr.to);
+      h+='<div class="row"><label>预览</label><input type="range" id="scaleprev" min="0.1" max="3" step="0.05" value="'+tr.to+'"></div>';
+    } else {
+      h+='<div class="row"><label>特效</label><select data-segf="block">'+BLOCKS.fx.map(function(f){return '<option value="'+f.name+'"'+(tr.block===f.name?' selected':'')+'>'+f.name+'</option>';}).join('')+'</select></div>';
+      var sch=fxSchema(tr.block);
+      if(sch) Object.keys(sch.params||{}).forEach(function(k){ var d=sch.params[k], v=tr.params&&tr.params[k]!=null?tr.params[k]:d.default; h+=segNum(k,'params.'+k,(v==null?'':v)); });
+    }
+    host.innerHTML=h;
+    var ps=host.querySelector('[data-segf="path"]');
+    if(ps) ps.onchange=function(){ tr.path=ps.value; if(tr.path==='orbit'&&!tr.center) tr.center={x:Math.round((tr.from.x+tr.to.x)/2),y:Math.round((tr.from.y+tr.to.y)/2)}; dirty=true; renderSegEdit(); lanesRender(); refreshFrame(); };
+    var bs=host.querySelector('[data-segf="block"]');
+    if(bs) bs.onchange=function(){ tr.block=bs.value; dirty=true; renderSegEdit(); lanesRender(); refreshFrame(); };
+    host.querySelectorAll('input[data-segf]').forEach(function(inp){ inp.onchange=function(){ var k=inp.dataset.segf; var v=inp.type==='number'?Number(inp.value):inp.value; setPath(tr,k,v); dirty=true; refreshFrame(); }; });
+    var sp=host.querySelector('#scaleprev');
+    if(sp) sp.oninput=function(){ tr.to=Number(sp.value); dirty=true; refreshFrame(); };
   }
 
   // ---- 左侧栏 ----
@@ -346,7 +347,7 @@ window.__DATA__ = ${data};
   function refreshResolve(cb){fetch('/resolve?ms='+Math.round(ms)).then(function(r){return r.json();}).then(function(d){resolved=d.items;if(cb)cb();}).catch(function(){});}
   function syncScene(cb){ if(!dirty){cb();return;} fetch('/working',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){ if(d.ok)dirty=false; else toast('同步失败：'+(d.error||'未知'),true); cb(); }).catch(function(){cb();}); }
   function refreshFrame(){ syncScene(function(){ img.src='/frame?ms='+Math.round(ms)+'&t='+(++frameSeq); document.getElementById('tlabel').textContent=fmt(ms); var s=currentSection(ms),l=currentLyric(ms); document.getElementById('seclabel').textContent=s?s.name:'—'; document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）'; refreshResolve(drawOverlay); }); }
-  function rebuildPanels(){renderProps();renderTracks();renderTools();lanesRender();}
+  function rebuildPanels(){renderProps();renderSegEdit();renderTools();lanesRender();}
   function rebuild(){rebuildPanels();refreshFrame();}
 
   // ---- 时间轴：滚轮缩放 + 播放 ----
@@ -459,7 +460,7 @@ window.__DATA__ = ${data};
     });
     host.innerHTML=html;
     host.querySelectorAll('.seg').forEach(function(sg){
-      sg.addEventListener('mousedown', function(e){ if(e.button!==0)return; var t=timeAt(e); laneSel={kind:sg.dataset.lane,s:Number(sg.dataset.s),e:Number(sg.dataset.e)}; if(sg.dataset.lane!=='life') seek(t); host.querySelectorAll('.seg').forEach(function(x){x.classList.remove('sel');}); sg.classList.add('sel'); });
+      sg.addEventListener('mousedown', function(e){ if(e.button!==0)return; var t=timeAt(e); laneSel={kind:sg.dataset.lane,s:Number(sg.dataset.s),e:Number(sg.dataset.e)}; if(sg.dataset.lane!=='life') seek(t); host.querySelectorAll('.seg').forEach(function(x){x.classList.remove('sel');}); sg.classList.add('sel'); renderSegEdit(); });
       sg.addEventListener('contextmenu', function(e){ e.preventDefault(); e.stopPropagation(); openMenu(e.clientX,e.clientY,el,sg.dataset.lane,Number(sg.dataset.s),Number(sg.dataset.e)); });
     });
     host.querySelectorAll('.lane').forEach(function(row){
@@ -468,6 +469,7 @@ window.__DATA__ = ${data};
     host.querySelectorAll('.hnd').forEach(function(hn){
       hn.addEventListener('mousedown', function(e){ e.preventDefault(); e.stopPropagation(); laneDrag={ lane:hn.dataset.lane, t:Number(hn.dataset.time), side:hn.dataset.side||null }; });
     });
+    renderSegEdit();
   }
   function timeAt(e){ var r=document.getElementById('tl').getBoundingClientRect(); return view.start + Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*view.span; }
   function addCut(el,kind,t){ if(t<=1||t>=INFO.durationMs-1)return; var cuts=el.cuts||(el.cuts={move:[],scale:[],fx:[]}); var c=cuts[kind]||(cuts[kind]=[]); if(c.some(function(x){return Math.abs(x-t)<1;}))return; c.push(Math.round(t)); c.sort(function(a,b){return a-b;}); dirty=true; }
@@ -475,21 +477,21 @@ window.__DATA__ = ${data};
   function delSegmentTrack(el,kind,s,e){ el.tracks=el.tracks.filter(function(tr){return !(tr.kind===kind && Math.abs(tr.startMs-s)<0.5 && Math.abs((tr.startMs+tr.durMs)-e)<0.5);}); dirty=true; lanesRender(); refreshFrame(); }
   function openMenu(x,y,el,kind,s,e){
     var m=document.getElementById('ctxmenu'), items;
-    if(kind==='move') items=[['静止','static'],['直线轨迹','line'],['在播放头打点','cut'],['—',''],['删除这段行为','del']];
+    if(kind==='move') items=[['静止','static'],['直线轨迹','line'],['圆形轨迹','orbit'],['在播放头打点','cut'],['—',''],['删除这段行为','del']];
     else if(kind==='scale') items=[['缩放 1→0.5','scale'],['在播放头打点','cut'],['删除这段行为','del']];
     else items=[['特效：发光','glow'],['在播放头打点','cut'],['删除这段行为','del']];
     m.innerHTML=items.map(function(it){ return it[1]===''?'<div style="height:1px;background:#3a3a44;margin:3px 0"></div>':'<button data-v="'+it[1]+'">'+it[0]+'</button>';}).join('');
     m.style.left=x+'px'; m.style.top=y+'px'; m.style.display='block';
     m.querySelectorAll('button').forEach(function(b){ b.onclick=function(){ m.style.display='none'; applyBehavior(el,kind,s,e,b.dataset.v); }; });
   }
+  function beginPick(el,s,e,mode){
+    seek(s);
+    fetch('/resolve?ms='+Math.round(s)).then(function(r){return r.json();}).then(function(d){ var it=d.items.filter(function(x){return x.id===el.id;})[0]; var from=it?{x:Math.round(it.x),y:Math.round(it.y)}:{x:el.at.x,y:el.at.y}; pick={ elId:el.id, s:s, e:e, from:from, mode:mode }; toast(mode==='orbit'?'点画面选「圆心」':'点画面选「终点」'); }).catch(function(){ pick={ elId:el.id, s:s, e:e, from:{x:el.at.x,y:el.at.y}, mode:mode }; toast('点画面选终点/圆心'); });
+  }
   function applyBehavior(el,kind,s,e,v){
     if(v==='cut'){ addCut(el,kind,ms); lanesRender(); return; }
     if(v==='static'||v==='del'){ delSegmentTrack(el,kind,s,e); return; }
-    if(v==='line'){
-      seek(s);
-      fetch('/resolve?ms='+Math.round(s)).then(function(r){return r.json();}).then(function(d){ var it=d.items.filter(function(x){return x.id===el.id;})[0]; var from=it?{x:Math.round(it.x),y:Math.round(it.y)}:{x:el.at.x,y:el.at.y}; pick={ elId:el.id, s:s, e:e, from:from }; toast('点画面选「终点」（起点=此刻位置）'); }).catch(function(){ pick={ elId:el.id, s:s, e:e, from:{x:el.at.x,y:el.at.y} }; toast('点画面选「终点」'); });
-      return;
-    }
+    if(v==='line'||v==='orbit'){ beginPick(el,s,e,v); return; }
     if(v==='scale'){ setSegmentTrack(el,kind,s,e,{ kind:'scale', from:(el.at.scale||1), to:0.5, ease:'linear' }); return; }
     if(v==='glow'){ setSegmentTrack(el,kind,s,e,{ kind:'fx', block:'glow', params:{} }); return; }
   }
