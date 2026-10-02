@@ -355,9 +355,17 @@ window.__DATA__ = ${data};
     if(inflight) return; inflight = true;
     fetch('/frame?ms='+Math.round(ms)+'&scale=0.5&t='+(++frameSeq)).then(function(r){return r.blob();}).then(function(b){ if(playing) img.src = URL.createObjectURL(b); }).catch(function(){}).then(function(){ inflight=false; });
   }
+  function stopPlay(){
+    playing = false; try { audio.pause(); } catch(_){}
+    document.getElementById('play').textContent = '▶ 播放';
+    ms = Math.max(0, Math.min(INFO.durationMs-1, audio.currentTime*1000));
+    tlRender(); document.getElementById('tlabel').textContent = fmt(ms); refreshFrame();
+  }
   function playLoop(){
     if(!playing) return;
-    ms = Math.min(INFO.durationMs-1, audio.currentTime*1000);
+    var t = audio.currentTime*1000;
+    if(t >= INFO.durationMs - 1){ stopPlay(); return; }
+    ms = t;
     if(ms < view.start || ms > view.start + view.span){ view.start = Math.max(0, ms - view.span*0.35); clampView(); }
     tlRender();
     document.getElementById('tlabel').textContent = fmt(ms);
@@ -365,7 +373,8 @@ window.__DATA__ = ${data};
     requestAnimationFrame(playLoop);
   }
   document.getElementById('play').onclick = function(){
-    if(playing){ playing=false; audio.pause(); this.textContent='▶ 播放'; refreshFrame(); return; }
+    if(playing){ stopPlay(); return; }
+    if(ms >= INFO.durationMs-1) ms = 0;
     playing=true; this.textContent='⏸ 暂停';
     try { audio.currentTime = ms/1000; } catch(_){}
     audio.play().catch(function(){ toast('音频被浏览器拦截：先点一下页面再按播放', true); });
