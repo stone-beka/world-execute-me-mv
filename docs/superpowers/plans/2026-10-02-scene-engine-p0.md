@@ -530,7 +530,6 @@ function roundRect(ctx, x, y, w, h, r) {
 
 ```js
 /** element.text.js — 文本元素块（在原点绘制，居中基线） */
-import { mono } from "../../core/fonts.js";
 
 export default {
   name: "text",
@@ -545,7 +544,7 @@ export default {
     return { w: (p.text ?? "").length * (p.size ?? 22) * 0.6, h: (p.size ?? 22) * 1.3 };
   },
   draw(ctx, s, p) {
-    ctx.font = mono(p.size ?? 22, p.weight ?? 400);
+    ctx.font = s.mono(p.size ?? 22, p.weight ?? 400);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = p.color ?? s.colors.fg;
@@ -980,7 +979,7 @@ git commit -m "feat(scene): 确定性求值器 resolveElement/evaluateScene"
 import { test, before } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { createSurface } from "../../src/core/render.js";
+import { createSurface, ts } from "../../src/core/render.js";
 import { registerProjectFonts } from "../../src/core/fonts.js";
 import { loadBlocks } from "../../src/scene/registry.js";
 import { normalizeScene } from "../../src/scene/format.js";
@@ -994,12 +993,12 @@ const scene = normalizeScene({
   elements: [{ id: "a", block: "rect", at: { x: 900, y: 500 }, params: { w: 200, h: 120 } }],
 });
 
-const hash = (surface) => createHash("sha1").update(surface.ctx.getImageData(0, 0, 1920, 1080).data).digest("hex");
+const hash = (surface) => createHash("sha1").update(surface.ctx.getImageData(0, 0, ts.width, ts.height).data).digest("hex");
 
 test("渲染出非底色像素（关地板）", () => {
   const s = createSurface();
   renderSceneFrame(s.ctx, scene, 0, { floor: false });
-  const d = s.ctx.getImageData(0, 0, 1920, 1080).data;
+  const d = s.ctx.getImageData(0, 0, ts.width, ts.height).data;
   let n = 0;
   for (let i = 0; i < d.length; i += 4) if (d[i] !== 5 || d[i + 1] !== 7 || d[i + 2] !== 10) n++;
   assert.ok(n > 1000, `非底色像素 ${n}`);
@@ -1102,12 +1101,13 @@ git commit -m "feat(scene): 场景帧渲染入口与子帧运动模糊"
 
 ---
 
-## Task 7: 样张 + CLI（PNG / 联络表 / 视频 / 自检）
+## Task 7: 样张 + CLI（PNG / 联络表 / 视频 / 自检）+ 确定性豁免
 
 **Files:**
 - Create: `scenes/p0-demo.json`
 - Create: `tools/scene.js`
 - Modify: `package.json`（scripts 增加 `"scene"`）
+- Modify: `verify/determinism-check.js`（ALLOW 表加 `tools/scene.js`，使本次提交起 verify 保持全绿）
 
 **Interfaces:**
 - Consumes: `src/scene/format.js`、`src/scene/registry.js`、`src/scene/render.js`、`src/core/render.js`、`src/core/post.js`、`src/core/fonts.js`、`src/core/timeline.js`、`ffmpeg-static`、`@napi-rs/canvas`。
@@ -1379,26 +1379,7 @@ npm run scene -- --file scenes/p0-demo.json --contact --count 20
 ```
 Expected: `out/scene/p0-demo-3.20s.png`（方块在中间、爱心在标题附近、标题可见）与 `out/scene/p0-demo-contact.png`（20 格能看到方块从左到右、爱心绕圈）
 
-- [ ] **Step 6: Commit**
-
-```bash
-git add scenes/p0-demo.json tools/scene.js package.json
-git commit -m "feat(scene): 场景 CLI（png/contact/video/selfcheck）与 P0 样张"
-```
-
----
-
-## Task 8: 确定性 ALLOW + 全量验收
-
-**Files:**
-- Modify: `verify/determinism-check.js`（ALLOW 表加 `tools/scene.js`）
-- Modify: `verify/picture-baseline.json`（如运行后自动更新，则一并提交）
-
-**Interfaces:**
-- Consumes: Task 7 的 `tools/scene.js`（含 `Date.now()`，只用于打印耗时）。
-- Produces: 无新导出；只是让全量验收保持绿。
-
-- [ ] **Step 1: 在 `verify/determinism-check.js` 的 `ALLOW` 数组里、`tools/watch-render.js` 那条之后追加**
+- [ ] **Step 6: 在 `verify/determinism-check.js` 的 `ALLOW` 数组里、`tools/watch-render.js` 那条之后追加，并跑确定性关**
 
 ```js
   {
@@ -1408,31 +1389,55 @@ git commit -m "feat(scene): 场景 CLI（png/contact/video/selfcheck）与 P0 �
   },
 ```
 
-- [ ] **Step 2: 跑确定性关，确认静态扫描通过**
+Run: `npm run verify:determinism`
+Expected: 静态扫描显示 `src/ 零违规`；重复渲染/乱序/并发三项全绿（`tools/scene.js` 的 `Date.now()` 已被显式豁免）。
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add scenes/p0-demo.json tools/scene.js package.json verify/determinism-check.js
+git commit -m "feat(scene): 场景 CLI（png/contact/video/selfcheck）、P0 样张与确定性豁免"
+```
+
+---
+
+## Task 8: 全量验收 + 出片
+
+**Files:**
+- Modify: `verify/picture-baseline.json`（仅当运行后自动更新时才提交；P0 不改 14 块画板，预期无变化）
+
+**Interfaces:**
+- Consumes: Task 7 的 CLI 与已装好的确定性豁免。
+- Produces: P0 成片 `out/scene/p0-demo.mp4` 与验收证据；无新代码导出。
+
+- [ ] **Step 1: 跑全部单元测试**
+
+Run: `npm test`
+Expected: 全 PASS（format / registry / blocks / evaluate / render）
+
+- [ ] **Step 2: 跑确定性关**
 
 Run: `npm run verify:determinism`
-Expected: `✅ ... src/ 零违规`；重复渲染/乱序/并发三项全绿；画面基线若变化会 warn 并自动更新（本次未改 14 块画板，应显示"与基线一致"）
+Expected: `✅ ... src/ 零违规`；重复渲染/乱序/并发三项全绿；画面基线显示"与基线一致"（本次未改画板）
 
 - [ ] **Step 3: 跑全量四关**
 
 Run: `npm run verify`
-Expected: static / gap / ink / determinism 四关全绿（旧 14 块画板不受影响）
+Expected: static / gap / ink / determinism 四关全绿
 
-- [ ] **Step 4: 跑全部单元测试**
-
-Run: `npm test`
-Expected: 全 PASS
-
-- [ ] **Step 5: 出 P0 成片短片（带后期），肉眼验收**
+- [ ] **Step 4: 出 P0 成片短片（带后期），肉眼验收**
 
 Run: `npm run scene -- --file scenes/p0-demo.json --video --post`
 Expected: `out/scene/p0-demo.mp4`，8 秒；方块滑行并缩小、标题淡入淡出、爱心绕标题转圈带辉光；无空洞、无黑帧
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: 若基线发生变化则提交**
+
+Run: `git status --short verify/picture-baseline.json`
+Expected: 无输出（未变）。若基线确被更新：
 
 ```bash
-git add verify/determinism-check.js verify/picture-baseline.json
-git commit -m "chore(scene): 确定性扫描豁免 tools/scene.js 耗时打印"
+git add verify/picture-baseline.json
+git commit -m "chore(scene): 刷新画面基线"
 ```
 
 ---
