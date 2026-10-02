@@ -1451,14 +1451,14 @@ git commit -m "chore(scene): 刷新画面基线"
 
 | 规格条目 | 对应 Task |
 |---|---|
-| §4 场景格式 + 校验规则 | Task 1 |
+| §4 场景格式 + 校验规则 | Task 1（结构校验/默认值）+ Task 2/终审修复（`assertSceneBlocks` 的**通道时间窗重叠硬错误**）；⚠️ 越界/未知字段的「警告」P0 未实现（暂缓，非阻塞） |
 | §5.1 元素块 / §5.4 注册表 / §5.3 组合块接口 | Task 2、3 |
 | §5.2 行为块（轨迹 + 特效 wrap/channel） | Task 4 |
 | §6 求值器语义（生命周期 / 保持 / 串接 / 淡入淡出） | Task 5 |
 | §7 渲染入口（清屏 / 地板 / 子帧） | Task 6 |
 | §8 CLI（png/contact/video/selfcheck） | Task 7 |
 | §9 目录结构 + package.json | Task 1、7 |
-| §10 错误处理（未知块、坏时间、求值报错） | Task 1、2、7 |
+| §10 错误处理（未知块、坏时间、求值报错） | Task 1、2、7 + 终审修复（`evaluateScene` 按「元素 id + ms」定位错误） |
 | §11 测试与验收（格式/确定性/落墨/肉眼/兼容） | 各 Task 测试 + Task 8 |
 | §4 `scenes/p0-demo.json` 样张 | Task 7 |
 
