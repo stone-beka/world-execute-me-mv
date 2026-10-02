@@ -103,7 +103,7 @@ window.__DATA__ = ${data};
   var D = window.__DATA__;
   var SCENE = D.scene, INFO = D.info, BLOCKS = D.blocks;
   var fps = INFO.fps || 60;
-  var ms = 0, sel = null, resolved = [], drag = null, resize = null, box = null, pending = null, timer = null, dirty = false, frameSeq = 0, frameBusy = false, frameQueued = false;
+  var ms = 0, sel = null, resolved = [], drag = null, resize = null, box = null, pending = null, timer = null, dirty = false, frameSeq = 0, liveTick = 0;
 
   var img = document.getElementById('view');
   var ov = document.getElementById('ov');
@@ -206,22 +206,24 @@ window.__DATA__ = ${data};
     if(box){ box.x1=c.x; box.y1=c.y; drawOverlay(); return; }
     if(resize){ var el=byId(resize.id); if(!el)return; var fx=resize.fixed.x, fy=resize.fixed.y;
       resize.box={ x:Math.min(fx,c.x), y:Math.min(fy,c.y), w:Math.abs(c.x-fx), h:Math.abs(c.y-fy) };
-      applyBox(el, resize.box); dirty=true; syncResolved(el); drawOverlay(); refreshFrame(0.5); return; }
-    if(drag){ var el2=byId(drag.id); if(!el2)return; el2.at.x=Math.round(drag.ax+(c.x-drag.sx)); el2.at.y=Math.round(drag.ay+(c.y-drag.sy)); dirty=true; syncResolved(el2); drawOverlay(); refreshFrame(0.5); return; }
+      applyBox(el, resize.box); dirty=true; syncResolved(el); drawOverlay(); live(); return; }
+    if(drag){ var el2=byId(drag.id); if(!el2)return; el2.at.x=Math.round(drag.ax+(c.x-drag.sx)); el2.at.y=Math.round(drag.ay+(c.y-drag.sy)); dirty=true; syncResolved(el2); drawOverlay(); live(); return; }
   });
   document.addEventListener('mouseup', function(){
     if(box){ var b=box; box=null; pending=null; setMode();
       var w=Math.abs(b.x1-b.x0), h=Math.abs(b.y1-b.y0);
       if(w<6||h<6){ toast('框太小，已取消',true); drawOverlay(); return; }
       createFromBox(b.block, b.x0,b.y0,b.x1,b.y1); return; }
-    if(resize){ resize=null; dirty=true; refreshFrame(1); renderProps(); return; }
-    if(drag){ var moved=drag.moved; drag=null; if(moved){ dirty=true; renderProps(); refreshFrame(1); } }
+    if(resize){ resize=null; dirty=true; refreshFrame(); renderProps(); return; }
+    if(drag){ var moved=drag.moved; drag=null; if(moved){ dirty=true; renderProps(); refreshFrame(); } }
   });
   function clientSize(el){ var p=el.params||{};
     if(el.block==='rect') return { w:p.w||200, h:p.h||120 };
     if(el.block==='wireHeart'){ var s=p.size||160; return { w:s, h:s }; }
     if(el.block==='text'){ var w=(p.width||0)>0?p.width:((p.text||'').length*(p.size||22)*0.6); var h=(p.height||0)>0?p.height:(p.size||22)*1.35; return { w:w, h:h }; }
     return null; }
+  function live(){ liveTick++; if(liveTick % 2 === 0) refreshFrameFast(); }
+  function refreshFrameFast(){ syncScene(function(){ img.src='/frame?ms='+Math.round(ms)+'&t='+(++frameSeq)+'&scale=0.5'; }); }
   function syncResolved(el){ var sz=clientSize(el); resolved.forEach(function(it){ if(it.id===el.id){ it.x=el.at.x; it.y=el.at.y; if(sz)it.size=sz; } }); }
 
   function createFromBox(block, x0,y0,x1,y1){
@@ -311,17 +313,7 @@ window.__DATA__ = ${data};
   // ---- 刷新 ----
   function refreshResolve(cb){fetch('/resolve?ms='+Math.round(ms)).then(function(r){return r.json();}).then(function(d){resolved=d.items;if(cb)cb();}).catch(function(){});}
   function syncScene(cb){ if(!dirty){cb();return;} fetch('/working',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){ if(d.ok)dirty=false; else toast('同步失败：'+(d.error||'未知'),true); cb(); }).catch(function(){cb();}); }
-  function refreshFrame(quality){ document.getElementById('tlabel').textContent=fmt(ms); var s=currentSection(ms),l=currentLyric(ms); document.getElementById('seclabel').textContent=s?s.name:'—'; document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）'; requestFrame(quality); refreshResolve(drawOverlay); }
-  function requestFrame(quality){
-    var q = quality || ((drag||resize)?0.5:1);
-    if (frameBusy) { frameQueued = q; return; }
-    frameBusy = true;
-    syncScene(function(){
-      var done = function(){ img.onload = null; img.onerror = null; frameBusy = false; if (frameQueued !== false) { var nq = frameQueued; frameQueued = false; requestFrame(nq); } };
-      img.onload = done; img.onerror = done;
-      img.src = '/frame?ms='+Math.round(ms)+'&t='+(++frameSeq)+(q<1?'&scale='+q:'');
-    });
-  }
+  function refreshFrame(){ syncScene(function(){ img.src='/frame?ms='+Math.round(ms)+'&t='+(++frameSeq); document.getElementById('tlabel').textContent=fmt(ms); var s=currentSection(ms),l=currentLyric(ms); document.getElementById('seclabel').textContent=s?s.name:'—'; document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）'; refreshResolve(drawOverlay); }); }
   function rebuild(){renderProps();renderTracks();renderTools();refreshFrame();}
 
   // ---- 时间轴 ----

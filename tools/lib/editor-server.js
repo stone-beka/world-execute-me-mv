@@ -10,7 +10,7 @@
  */
 import { createServer } from "node:http";
 import { writeFileSync, copyFileSync, existsSync } from "node:fs";
-import { createSurface, surfaceToPNG, ts } from "../../src/core/render.js";
+import { ts, createSurface, surfaceToPNG } from "../../src/core/render.js";
 import { renderSceneFrame } from "../../src/scene/render.js";
 import { resolveElement } from "../../src/scene/evaluate.js";
 import { normalizeScene } from "../../src/scene/format.js";
@@ -33,8 +33,17 @@ function readBody(req, limit = 8 * 1024 * 1024) {
 
 export function createEditorServer({ scenePath, scene, info, blocks, page, onSceneChange }) {
   const surface = createSurface();
+  const surfaces = new Map();
+  const surfaceFor = (scale) => {
+    const key = String(scale);
+    let s = surfaces.get(key);
+    if (!s) {
+      s = createSurface(Math.round(ts.width * scale), Math.round(ts.height * scale));
+      surfaces.set(key, s);
+    }
+    return s;
+  };
   const fps = info.fps || 60;
-  let preview = null;
 
   const frameCount = () => Math.max(1, Math.round((scene.durationMs / 1000) * fps));
 
@@ -95,20 +104,23 @@ export function createEditorServer({ scenePath, scene, info, blocks, page, onSce
       }
       if (req.method === "GET" && url.pathname === "/frame") {
         const ms = Number(url.searchParams.get("ms") ?? 0);
-        const scale = Math.min(1, Math.max(0.25, Number(url.searchParams.get("scale") ?? 1)));
+        const scale = Math.min(1, Math.max(0.1, Number(url.searchParams.get("scale") ?? 1)));
         const frame = Math.max(0, Math.min(frameCount() - 1, Math.round((ms / 1000) * fps)));
-        renderSceneFrame(surface.ctx, scene, frame);
-        let out = surface;
-        if (scale < 1) {
-          const w = Math.round(ts.width * scale);
-          const h = Math.round(ts.height * scale);
-          if (!preview || preview.canvas.width !== w || preview.canvas.height !== h) preview = createSurface(w, h);
-          preview.ctx.clearRect(0, 0, w, h);
-          preview.ctx.drawImage(surface.canvas, 0, 0, w, h);
-          out = preview;
+        let target = surface;
+        if (scale !== 1) {
+          target = surfaceFor(scale);
+          const c = target.ctx;
+          c.setTransform(1, 0, 0, 1, 0, 0);
+          c.clearRect(0, 0, target.canvas.width, target.canvas.height);
+          c.save();
+          c.scale(scale, scale);
+          renderSceneFrame(c, scene, frame);
+          c.restore();
+        } else {
+          renderSceneFrame(surface.ctx, scene, frame);
         }
         res.writeHead(200, { "content-type": "image/png", "cache-control": "no-store" });
-        res.end(surfaceToPNG(out));
+        res.end(surfaceToPNG(target));
         return;
       }
       if (req.method === "POST" && url.pathname === "/working") {
