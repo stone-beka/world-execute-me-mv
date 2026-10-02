@@ -441,7 +441,9 @@ import wireHeart from "../../src/scene/blocks/element.wireHeart.js";
 
 before(() => registerProjectFonts());
 
-/** 在原点画一块，统计非底色像素 */
+/** 在原点画一块，统计「有落墨」的像素（alpha > 0）。
+ *  注意：createSurface() 初始是全透明 [0,0,0,0]，不是底色——
+ *  所以只能用 alpha 判定，不能用「非底色」判定（空画布会被误判成墨）。 */
 function inkCount(block, params, s) {
   const surface = createSurface();
   const { ctx } = surface;
@@ -451,9 +453,7 @@ function inkCount(block, params, s) {
   ctx.restore();
   const d = ctx.getImageData(0, 0, ts.width, ts.height).data;
   let n = 0;
-  for (let i = 0; i < d.length; i += 4) {
-    if (d[i] !== 5 || d[i + 1] !== 7 || d[i + 2] !== 10) n++;
-  }
+  for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 0) n++;
   return n;
 }
 
