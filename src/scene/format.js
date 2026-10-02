@@ -72,7 +72,7 @@ function normalizeElement(el, i, durationMs, seen) {
 
   const cuts = { move: [], scale: [], fx: [] };
   if (el.cuts && typeof el.cuts === "object") {
-    for (const k of ["move", "scale", "fx"]) {
+    for (const k of Object.keys(el.cuts)) {
       const arr = Array.isArray(el.cuts[k]) ? el.cuts[k] : [];
       const seenCut = new Set();
       cuts[k] = arr
