@@ -41,6 +41,13 @@ test("wireHeart 落墨", () => {
   assert.ok(inkCount(wireHeart, { size: 200 }, S()) > 300);
 });
 
+test("text 宽度触发换行（sizeOf 高度增加、宽度=设定值）", () => {
+  const one = text.sizeOf({ text: "if i can give you all the stimulations", size: 40 });
+  const wrapped = text.sizeOf({ text: "if i can give you all the stimulations", size: 40, width: 300 });
+  assert.ok(wrapped.h > one.h, `换行后应更高：${wrapped.h} > ${one.h}`);
+  assert.equal(wrapped.w, 300);
+});
+
 import move from "../../src/scene/blocks/track.move.js";
 import scale from "../../src/scene/blocks/track.scale.js";
 import glow from "../../src/scene/blocks/fx.glow.js";
