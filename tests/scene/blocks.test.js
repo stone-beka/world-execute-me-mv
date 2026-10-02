@@ -40,3 +40,62 @@ test("text 落墨", () => {
 test("wireHeart 落墨", () => {
   assert.ok(inkCount(wireHeart, { size: 200 }, S()) > 300);
 });
+
+import move from "../../src/scene/blocks/track.move.js";
+import scale from "../../src/scene/blocks/track.scale.js";
+import glow from "../../src/scene/blocks/fx.glow.js";
+import { createSurface as surface } from "../../src/core/render.js";
+import { resetBlocks, loadBlocks, names } from "../../src/scene/registry.js";
+
+test("六个块全部载入（Task 2 的完整回归）", async () => {
+  resetBlocks();
+  await loadBlocks();
+  const n = names();
+  assert.deepEqual(n.elements.slice().sort(), ["rect", "text", "wireHeart"]);
+  assert.deepEqual(n.tracks.slice().sort(), ["move", "scale"]);
+  assert.deepEqual(n.fx, ["glow"]);
+});
+
+test("move.line 起点/终点/保持", () => {
+  const seg = { path: "line", from: { x: 10, y: 20 }, to: { x: 110, y: 20 } };
+  const st = { x: 0, y: 0 };
+  move.apply(st, 0, seg);
+  assert.equal(st.x, 10);
+  move.apply(st, 1, seg);
+  assert.equal(st.x, 110);
+  move.apply(st, 0.5, seg);
+  assert.equal(st.x, 60);
+});
+
+test("move.orbit 半圈到对侧", () => {
+  const seg = { path: "orbit", center: { x: 0, y: 0 }, from: { x: 200, y: 0 }, sweep: 360 };
+  const st = { x: 0, y: 0 };
+  move.apply(st, 0.5, seg);
+  assert.ok(Math.abs(st.x - -200) < 1e-6, `x=${st.x}`);
+  assert.ok(Math.abs(st.y) < 1e-6, `y=${st.y}`);
+});
+
+test("move.curve 中点等于贝塞尔", () => {
+  const seg = { path: "curve", from: { x: 0, y: 0 }, to: { x: 100, y: 0 }, via: { x: 50, y: 100 } };
+  const st = { x: 0, y: 0 };
+  move.apply(st, 0.5, seg);
+  assert.equal(st.x, 50);
+  assert.equal(st.y, 50);
+});
+
+test("move 缺字段抛错", () => {
+  assert.throws(() => move.apply({}, 0.5, { path: "line", from: { x: 0, y: 0 } }), /move/);
+});
+
+test("scale 线性", () => {
+  const st = { scale: 1 };
+  scale.apply(st, 0.5, { from: 1, to: 3 });
+  assert.equal(st.scale, 2);
+});
+
+test("glow 包裹器会多次调用 inner(s = 0 时至少画一次)", () => {
+  const sv = surface();
+  let calls = 0;
+  glow.drawWrapped(sv.ctx, S(), () => { calls++; }, 1, { radius: 10 });
+  assert.ok(calls >= 2, `calls=${calls}`);
+});
