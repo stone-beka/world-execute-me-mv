@@ -103,7 +103,7 @@ window.__DATA__ = ${data};
   var D = window.__DATA__;
   var SCENE = D.scene, INFO = D.info, BLOCKS = D.blocks;
   var fps = INFO.fps || 60;
-  var ms = 0, sel = null, resolved = [], drag = null, resize = null, box = null, pending = null, timer = null, dirty = false, frameSeq = 0;
+  var ms = 0, sel = null, resolved = [], drag = null, resize = null, box = null, pending = null, timer = null, dirty = false, frameSeq = 0, liveTick = 0;
 
   var img = document.getElementById('view');
   var ov = document.getElementById('ov');
@@ -183,7 +183,7 @@ window.__DATA__ = ${data};
   }
   function handleAt(x,y){
     var el=curEl(); if(!el)return null;
-    var b=elementBox(el), r=14/ (ov.width/INFO.width || 1);
+    var b=elementBox(el), r=10/ (ov.width/INFO.width || 1);
     var corners={ tl:{x:b.x,y:b.y}, tr:{x:b.x+b.w,y:b.y}, bl:{x:b.x,y:b.y+b.h}, br:{x:b.x+b.w,y:b.y+b.h} };
     for(var k in corners){var c=corners[k];if(Math.abs(x-c.x)<r&&Math.abs(y-c.y)<r)return k;}
     return null;
@@ -206,8 +206,8 @@ window.__DATA__ = ${data};
     if(box){ box.x1=c.x; box.y1=c.y; drawOverlay(); return; }
     if(resize){ var el=byId(resize.id); if(!el)return; var fx=resize.fixed.x, fy=resize.fixed.y;
       resize.box={ x:Math.min(fx,c.x), y:Math.min(fy,c.y), w:Math.abs(c.x-fx), h:Math.abs(c.y-fy) };
-      applyBox(el, resize.box); syncResolved(el); drawOverlay(); return; }
-    if(drag){ var el2=byId(drag.id); if(!el2)return; el2.at.x=Math.round(drag.ax+(c.x-drag.sx)); el2.at.y=Math.round(drag.ay+(c.y-drag.sy)); syncResolved(el2); drawOverlay(); return; }
+      applyBox(el, resize.box); dirty=true; syncResolved(el); drawOverlay(); live(); return; }
+    if(drag){ var el2=byId(drag.id); if(!el2)return; el2.at.x=Math.round(drag.ax+(c.x-drag.sx)); el2.at.y=Math.round(drag.ay+(c.y-drag.sy)); dirty=true; syncResolved(el2); drawOverlay(); live(); return; }
   });
   document.addEventListener('mouseup', function(){
     if(box){ var b=box; box=null; pending=null; setMode();
@@ -217,7 +217,13 @@ window.__DATA__ = ${data};
     if(resize){ resize=null; dirty=true; refreshFrame(); renderProps(); return; }
     if(drag){ var moved=drag.moved; drag=null; if(moved){ dirty=true; renderProps(); refreshFrame(); } }
   });
-  function syncResolved(el){ resolved.forEach(function(it){ if(it.id===el.id){ it.x=el.at.x; it.y=el.at.y; } }); }
+  function clientSize(el){ var p=el.params||{};
+    if(el.block==='rect') return { w:p.w||200, h:p.h||120 };
+    if(el.block==='wireHeart'){ var s=p.size||160; return { w:s, h:s }; }
+    if(el.block==='text'){ var w=(p.width||0)>0?p.width:((p.text||'').length*(p.size||22)*0.6); var h=(p.height||0)>0?p.height:(p.size||22)*1.35; return { w:w, h:h }; }
+    return null; }
+  function live(){ liveTick++; if(liveTick % 4 === 0) refreshFrame(); }
+  function syncResolved(el){ var sz=clientSize(el); resolved.forEach(function(it){ if(it.id===el.id){ it.x=el.at.x; it.y=el.at.y; if(sz)it.size=sz; } }); }
 
   function createFromBox(block, x0,y0,x1,y1){
     var b={ x:Math.min(x0,x1), y:Math.min(y0,y1), w:Math.abs(x1-x0), h:Math.abs(y1-y0) };
