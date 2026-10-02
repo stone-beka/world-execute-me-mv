@@ -1,0 +1,3152 @@
+{
+  "source": "lyrics.txt",
+  "mode": "lrc",
+  "params": {
+    "snapMs": 250,
+    "gapMs": 40,
+    "hopMs": 20,
+    "offsetMs": 0
+  },
+  "_note": "conf='lrc' 表示行时间来自 LRC 时间戳；'derived' 表示机器从音频估的。词级细分与行尾始终是机器推的。",
+  "generatedAt": "STATIC",
+  "lines": [
+    {
+      "text": "Switch on the power line",
+      "start": 270,
+      "singEnd": 1890,
+      "end": 1930,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Switch",
+          "start": 270,
+          "end": 480,
+          "conf": "lrc"
+        },
+        {
+          "w": "on",
+          "start": 500,
+          "end": 720,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 740,
+          "end": 940,
+          "conf": "lrc"
+        },
+        {
+          "w": "power",
+          "start": 960,
+          "end": 1400,
+          "conf": "lrc"
+        },
+        {
+          "w": "line",
+          "start": 1420,
+          "end": 1890,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Remember to put on protection",
+      "start": 1930,
+      "singEnd": 3910,
+      "end": 3950,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Remember",
+          "start": 1960,
+          "end": 2540,
+          "conf": "lrc"
+        },
+        {
+          "w": "to",
+          "start": 2560,
+          "end": 2780,
+          "conf": "lrc"
+        },
+        {
+          "w": "put",
+          "start": 2800,
+          "end": 3000,
+          "conf": "lrc"
+        },
+        {
+          "w": "on",
+          "start": 3020,
+          "end": 3240,
+          "conf": "lrc"
+        },
+        {
+          "w": "protection",
+          "start": 3260,
+          "end": 3910,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Lay down your pieces",
+      "start": 3950,
+      "singEnd": 5530,
+      "end": 5570,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Lay",
+          "start": 3960,
+          "end": 4240,
+          "conf": "lrc"
+        },
+        {
+          "w": "down",
+          "start": 4260,
+          "end": 4560,
+          "conf": "lrc"
+        },
+        {
+          "w": "your",
+          "start": 4580,
+          "end": 4860,
+          "conf": "lrc"
+        },
+        {
+          "w": "pieces",
+          "start": 4880,
+          "end": 5530,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "And let's begin object creation",
+      "start": 5570,
+      "singEnd": 7560,
+      "end": 7600,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "And",
+          "start": 5580,
+          "end": 5800,
+          "conf": "lrc"
+        },
+        {
+          "w": "let's",
+          "start": 5820,
+          "end": 6080,
+          "conf": "lrc"
+        },
+        {
+          "w": "begin",
+          "start": 6100,
+          "end": 6540,
+          "conf": "lrc"
+        },
+        {
+          "w": "object",
+          "start": 6560,
+          "end": 7020,
+          "conf": "lrc"
+        },
+        {
+          "w": "creation",
+          "start": 7040,
+          "end": 7560,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Fill in my data parameters initialisation",
+      "start": 7600,
+      "singEnd": 11200,
+      "end": 11240,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Fill",
+          "start": 7600,
+          "end": 7780,
+          "conf": "lrc"
+        },
+        {
+          "w": "in",
+          "start": 7800,
+          "end": 8080,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 8100,
+          "end": 8320,
+          "conf": "lrc"
+        },
+        {
+          "w": "data",
+          "start": 8340,
+          "end": 8780,
+          "conf": "lrc"
+        },
+        {
+          "w": "parameters",
+          "start": 8800,
+          "end": 9700,
+          "conf": "lrc"
+        },
+        {
+          "w": "initialisation",
+          "start": 9720,
+          "end": 11200,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Setup our new world",
+      "start": 11240,
+      "singEnd": 12890,
+      "end": 12930,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Setup",
+          "start": 11260,
+          "end": 11880,
+          "conf": "lrc"
+        },
+        {
+          "w": "our",
+          "start": 11900,
+          "end": 12180,
+          "conf": "lrc"
+        },
+        {
+          "w": "new",
+          "start": 12200,
+          "end": 12540,
+          "conf": "lrc"
+        },
+        {
+          "w": "world",
+          "start": 12560,
+          "end": 12890,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "And let's begin the simulation",
+      "start": 12930,
+      "singEnd": 15960,
+      "end": 16000,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "And",
+          "start": 12960,
+          "end": 13240,
+          "conf": "lrc"
+        },
+        {
+          "w": "let's",
+          "start": 13260,
+          "end": 13580,
+          "conf": "lrc"
+        },
+        {
+          "w": "begin",
+          "start": 13600,
+          "end": 14280,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 14300,
+          "end": 14620,
+          "conf": "lrc"
+        },
+        {
+          "w": "simulation",
+          "start": 14640,
+          "end": 15960,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "world.execute(me);",
+      "start": 16000,
+      "singEnd": 16820,
+      "end": 16820,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "world.execute(me);",
+          "start": 16000,
+          "end": 16820,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I'm a set of points",
+      "start": 29740,
+      "singEnd": 31330,
+      "end": 31370,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 29760,
+          "end": 30000,
+          "conf": "lrc"
+        },
+        {
+          "w": "I'm",
+          "start": 30020,
+          "end": 30280,
+          "conf": "lrc"
+        },
+        {
+          "w": "a",
+          "start": 30300,
+          "end": 30500,
+          "conf": "lrc"
+        },
+        {
+          "w": "set",
+          "start": 30520,
+          "end": 30800,
+          "conf": "lrc"
+        },
+        {
+          "w": "of",
+          "start": 30820,
+          "end": 31020,
+          "conf": "lrc"
+        },
+        {
+          "w": "points",
+          "start": 31040,
+          "end": 31330,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I will give you my dimension",
+      "start": 31370,
+      "singEnd": 33380,
+      "end": 33420,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 31370,
+          "end": 31580,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 31600,
+          "end": 31720,
+          "conf": "lrc"
+        },
+        {
+          "w": "will",
+          "start": 31740,
+          "end": 31980,
+          "conf": "lrc"
+        },
+        {
+          "w": "give",
+          "start": 32000,
+          "end": 32380,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 32400,
+          "end": 32520,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 32540,
+          "end": 32780,
+          "conf": "lrc"
+        },
+        {
+          "w": "dimension",
+          "start": 32800,
+          "end": 33380,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I'm a circle",
+      "start": 33420,
+      "singEnd": 34940,
+      "end": 34980,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 33420,
+          "end": 33720,
+          "conf": "lrc"
+        },
+        {
+          "w": "I'm",
+          "start": 33740,
+          "end": 34000,
+          "conf": "lrc"
+        },
+        {
+          "w": "a",
+          "start": 34020,
+          "end": 34320,
+          "conf": "lrc"
+        },
+        {
+          "w": "circle",
+          "start": 34340,
+          "end": 34940,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I will give you my circumference",
+      "start": 34980,
+      "singEnd": 37110,
+      "end": 37150,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 34980,
+          "end": 35100,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 35120,
+          "end": 35300,
+          "conf": "lrc"
+        },
+        {
+          "w": "will",
+          "start": 35320,
+          "end": 35480,
+          "conf": "lrc"
+        },
+        {
+          "w": "give",
+          "start": 35500,
+          "end": 35840,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 35860,
+          "end": 36020,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 36040,
+          "end": 36180,
+          "conf": "lrc"
+        },
+        {
+          "w": "circumference",
+          "start": 36200,
+          "end": 37110,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I'm a sine wave",
+      "start": 37150,
+      "singEnd": 38690,
+      "end": 38730,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 37180,
+          "end": 37320,
+          "conf": "lrc"
+        },
+        {
+          "w": "I'm",
+          "start": 37340,
+          "end": 37580,
+          "conf": "lrc"
+        },
+        {
+          "w": "a",
+          "start": 37600,
+          "end": 37800,
+          "conf": "lrc"
+        },
+        {
+          "w": "sine",
+          "start": 37820,
+          "end": 38260,
+          "conf": "lrc"
+        },
+        {
+          "w": "wave",
+          "start": 38280,
+          "end": 38690,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then you can sit on all my tangents",
+      "start": 38730,
+      "singEnd": 40740,
+      "end": 40780,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 38740,
+          "end": 38940,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 38960,
+          "end": 39160,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 39180,
+          "end": 39360,
+          "conf": "lrc"
+        },
+        {
+          "w": "sit",
+          "start": 39380,
+          "end": 39580,
+          "conf": "lrc"
+        },
+        {
+          "w": "on",
+          "start": 39600,
+          "end": 39780,
+          "conf": "lrc"
+        },
+        {
+          "w": "all",
+          "start": 39800,
+          "end": 40040,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 40060,
+          "end": 40300,
+          "conf": "lrc"
+        },
+        {
+          "w": "tangents",
+          "start": 40320,
+          "end": 40740,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I approach infinity",
+      "start": 40780,
+      "singEnd": 42380,
+      "end": 42420,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 40780,
+          "end": 40980,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 41000,
+          "end": 41120,
+          "conf": "lrc"
+        },
+        {
+          "w": "approach",
+          "start": 41140,
+          "end": 41560,
+          "conf": "lrc"
+        },
+        {
+          "w": "infinity",
+          "start": 41580,
+          "end": 42380,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then you can be my limitations",
+      "start": 42420,
+      "singEnd": 44440,
+      "end": 44480,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 42420,
+          "end": 42600,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 42620,
+          "end": 42820,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 42840,
+          "end": 43100,
+          "conf": "lrc"
+        },
+        {
+          "w": "be",
+          "start": 43120,
+          "end": 43320,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 43340,
+          "end": 43560,
+          "conf": "lrc"
+        },
+        {
+          "w": "limitations",
+          "start": 43580,
+          "end": 44440,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Switch my current",
+      "start": 44480,
+      "singEnd": 46090,
+      "end": 46130,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Switch",
+          "start": 44500,
+          "end": 44860,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 44880,
+          "end": 45260,
+          "conf": "lrc"
+        },
+        {
+          "w": "current",
+          "start": 45280,
+          "end": 46090,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "To AC to DC",
+      "start": 46130,
+      "singEnd": 47900,
+      "end": 47940,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "To",
+          "start": 46130,
+          "end": 46520,
+          "conf": "lrc"
+        },
+        {
+          "w": "AC",
+          "start": 46540,
+          "end": 47020,
+          "conf": "lrc"
+        },
+        {
+          "w": "to",
+          "start": 47040,
+          "end": 47400,
+          "conf": "lrc"
+        },
+        {
+          "w": "DC",
+          "start": 47420,
+          "end": 47900,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "And then blind my vision",
+      "start": 47940,
+      "singEnd": 49740,
+      "end": 49780,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "And",
+          "start": 47960,
+          "end": 48220,
+          "conf": "lrc"
+        },
+        {
+          "w": "then",
+          "start": 48240,
+          "end": 48480,
+          "conf": "lrc"
+        },
+        {
+          "w": "blind",
+          "start": 48500,
+          "end": 48780,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 48800,
+          "end": 49140,
+          "conf": "lrc"
+        },
+        {
+          "w": "vision",
+          "start": 49160,
+          "end": 49740,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "So dizzy so dizzy",
+      "start": 49780,
+      "singEnd": 51340,
+      "end": 51380,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "So",
+          "start": 49800,
+          "end": 50020,
+          "conf": "lrc"
+        },
+        {
+          "w": "dizzy",
+          "start": 50040,
+          "end": 50540,
+          "conf": "lrc"
+        },
+        {
+          "w": "so",
+          "start": 50560,
+          "end": 50780,
+          "conf": "lrc"
+        },
+        {
+          "w": "dizzy",
+          "start": 50800,
+          "end": 51340,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Oh we can travel",
+      "start": 51380,
+      "singEnd": 53440,
+      "end": 53480,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Oh",
+          "start": 51400,
+          "end": 51820,
+          "conf": "lrc"
+        },
+        {
+          "w": "we",
+          "start": 51840,
+          "end": 52160,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 52180,
+          "end": 52580,
+          "conf": "lrc"
+        },
+        {
+          "w": "travel",
+          "start": 52600,
+          "end": 53440,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "To A.D to B.C",
+      "start": 53480,
+      "singEnd": 55130,
+      "end": 55170,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "To",
+          "start": 53520,
+          "end": 53900,
+          "conf": "lrc"
+        },
+        {
+          "w": "A.D",
+          "start": 53920,
+          "end": 54300,
+          "conf": "lrc"
+        },
+        {
+          "w": "to",
+          "start": 54320,
+          "end": 54680,
+          "conf": "lrc"
+        },
+        {
+          "w": "B.C",
+          "start": 54700,
+          "end": 55130,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "And we can unite",
+      "start": 55170,
+      "singEnd": 57130,
+      "end": 57170,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "And",
+          "start": 55170,
+          "end": 55480,
+          "conf": "lrc"
+        },
+        {
+          "w": "we",
+          "start": 55500,
+          "end": 55800,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 55820,
+          "end": 56140,
+          "conf": "lrc"
+        },
+        {
+          "w": "unite",
+          "start": 56160,
+          "end": 57130,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "So deeply so deeply",
+      "start": 57170,
+      "singEnd": 59360,
+      "end": 59400,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "So",
+          "start": 57170,
+          "end": 57540,
+          "conf": "lrc"
+        },
+        {
+          "w": "deeply",
+          "start": 57560,
+          "end": 58240,
+          "conf": "lrc"
+        },
+        {
+          "w": "so",
+          "start": 58260,
+          "end": 58560,
+          "conf": "lrc"
+        },
+        {
+          "w": "deeply",
+          "start": 58580,
+          "end": 59360,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I can",
+      "start": 59400,
+      "singEnd": 60160,
+      "end": 60200,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 59400,
+          "end": 59640,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 59660,
+          "end": 59880,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 59900,
+          "end": 60160,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I can give you all the stimulations",
+      "start": 60200,
+      "singEnd": 62880,
+      "end": 62920,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 60200,
+          "end": 60420,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 60440,
+          "end": 60640,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 60660,
+          "end": 60860,
+          "conf": "lrc"
+        },
+        {
+          "w": "give",
+          "start": 60880,
+          "end": 61280,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 61300,
+          "end": 61540,
+          "conf": "lrc"
+        },
+        {
+          "w": "all",
+          "start": 61560,
+          "end": 61800,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 61820,
+          "end": 61980,
+          "conf": "lrc"
+        },
+        {
+          "w": "stimulations",
+          "start": 62000,
+          "end": 62880,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I can",
+      "start": 62920,
+      "singEnd": 63820,
+      "end": 63860,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 62920,
+          "end": 63180,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 63200,
+          "end": 63460,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 63480,
+          "end": 63820,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I can be your only satisfaction",
+      "start": 63860,
+      "singEnd": 66580,
+      "end": 66620,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 63880,
+          "end": 64100,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 64120,
+          "end": 64360,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 64380,
+          "end": 64560,
+          "conf": "lrc"
+        },
+        {
+          "w": "be",
+          "start": 64580,
+          "end": 64840,
+          "conf": "lrc"
+        },
+        {
+          "w": "your",
+          "start": 64860,
+          "end": 65080,
+          "conf": "lrc"
+        },
+        {
+          "w": "only",
+          "start": 65100,
+          "end": 65540,
+          "conf": "lrc"
+        },
+        {
+          "w": "satisfaction",
+          "start": 65560,
+          "end": 66580,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I can make you happy",
+      "start": 66620,
+      "singEnd": 68440,
+      "end": 68480,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 66620,
+          "end": 66800,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 66820,
+          "end": 67080,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 67100,
+          "end": 67320,
+          "conf": "lrc"
+        },
+        {
+          "w": "make",
+          "start": 67340,
+          "end": 67740,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 67760,
+          "end": 67920,
+          "conf": "lrc"
+        },
+        {
+          "w": "happy",
+          "start": 67940,
+          "end": 68440,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "I will run the execution",
+      "start": 68480,
+      "singEnd": 70280,
+      "end": 70320,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "I",
+          "start": 68480,
+          "end": 68720,
+          "conf": "lrc"
+        },
+        {
+          "w": "will",
+          "start": 68740,
+          "end": 68940,
+          "conf": "lrc"
+        },
+        {
+          "w": "run",
+          "start": 68960,
+          "end": 69180,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 69200,
+          "end": 69360,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 69380,
+          "end": 70280,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Though we are trapped",
+      "start": 70320,
+      "singEnd": 71720,
+      "end": 71760,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Though",
+          "start": 70320,
+          "end": 70560,
+          "conf": "lrc"
+        },
+        {
+          "w": "we",
+          "start": 70580,
+          "end": 70760,
+          "conf": "lrc"
+        },
+        {
+          "w": "are",
+          "start": 70780,
+          "end": 71260,
+          "conf": "lrc"
+        },
+        {
+          "w": "trapped",
+          "start": 71280,
+          "end": 71720,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "In this strange strange simulation",
+      "start": 71760,
+      "singEnd": 74000,
+      "end": 74040,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "In",
+          "start": 71760,
+          "end": 71940,
+          "conf": "lrc"
+        },
+        {
+          "w": "this",
+          "start": 71960,
+          "end": 72160,
+          "conf": "lrc"
+        },
+        {
+          "w": "strange",
+          "start": 72180,
+          "end": 72680,
+          "conf": "lrc"
+        },
+        {
+          "w": "strange",
+          "start": 72700,
+          "end": 73060,
+          "conf": "lrc"
+        },
+        {
+          "w": "simulation",
+          "start": 73080,
+          "end": 74000,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I'm an eggplant",
+      "start": 74040,
+      "singEnd": 75640,
+      "end": 75680,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 74040,
+          "end": 74340,
+          "conf": "lrc"
+        },
+        {
+          "w": "I'm",
+          "start": 74360,
+          "end": 74640,
+          "conf": "lrc"
+        },
+        {
+          "w": "an",
+          "start": 74660,
+          "end": 74920,
+          "conf": "lrc"
+        },
+        {
+          "w": "eggplant",
+          "start": 74940,
+          "end": 75640,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I will give you my nutrients",
+      "start": 75680,
+      "singEnd": 77660,
+      "end": 77700,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 75680,
+          "end": 75880,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 75900,
+          "end": 76100,
+          "conf": "lrc"
+        },
+        {
+          "w": "will",
+          "start": 76120,
+          "end": 76340,
+          "conf": "lrc"
+        },
+        {
+          "w": "give",
+          "start": 76360,
+          "end": 76720,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 76740,
+          "end": 76940,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 76960,
+          "end": 77160,
+          "conf": "lrc"
+        },
+        {
+          "w": "nutrients",
+          "start": 77180,
+          "end": 77660,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I'm a tomato",
+      "start": 77700,
+      "singEnd": 79280,
+      "end": 79320,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 77700,
+          "end": 77940,
+          "conf": "lrc"
+        },
+        {
+          "w": "I'm",
+          "start": 77960,
+          "end": 78260,
+          "conf": "lrc"
+        },
+        {
+          "w": "a",
+          "start": 78280,
+          "end": 78440,
+          "conf": "lrc"
+        },
+        {
+          "w": "tomato",
+          "start": 78460,
+          "end": 79280,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I'll give you antioxidants",
+      "start": 79320,
+      "singEnd": 81330,
+      "end": 81370,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 79320,
+          "end": 79520,
+          "conf": "lrc"
+        },
+        {
+          "w": "I'll",
+          "start": 79540,
+          "end": 79720,
+          "conf": "lrc"
+        },
+        {
+          "w": "give",
+          "start": 79740,
+          "end": 80200,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 80220,
+          "end": 80400,
+          "conf": "lrc"
+        },
+        {
+          "w": "antioxidants",
+          "start": 80420,
+          "end": 81330,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I'm a tabby cat",
+      "start": 81370,
+      "singEnd": 83020,
+      "end": 83060,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 81370,
+          "end": 81640,
+          "conf": "lrc"
+        },
+        {
+          "w": "I'm",
+          "start": 81660,
+          "end": 81920,
+          "conf": "lrc"
+        },
+        {
+          "w": "a",
+          "start": 81940,
+          "end": 82180,
+          "conf": "lrc"
+        },
+        {
+          "w": "tabby",
+          "start": 82200,
+          "end": 82720,
+          "conf": "lrc"
+        },
+        {
+          "w": "cat",
+          "start": 82740,
+          "end": 83020,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I will purr for your enjoyment",
+      "start": 83060,
+      "singEnd": 85090,
+      "end": 85130,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 83060,
+          "end": 83260,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 83280,
+          "end": 83480,
+          "conf": "lrc"
+        },
+        {
+          "w": "will",
+          "start": 83500,
+          "end": 83720,
+          "conf": "lrc"
+        },
+        {
+          "w": "purr",
+          "start": 83740,
+          "end": 83980,
+          "conf": "lrc"
+        },
+        {
+          "w": "for",
+          "start": 84000,
+          "end": 84180,
+          "conf": "lrc"
+        },
+        {
+          "w": "your",
+          "start": 84200,
+          "end": 84380,
+          "conf": "lrc"
+        },
+        {
+          "w": "enjoyment",
+          "start": 84400,
+          "end": 85090,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I'm the only god",
+      "start": 85130,
+      "singEnd": 86700,
+      "end": 86740,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 85130,
+          "end": 85340,
+          "conf": "lrc"
+        },
+        {
+          "w": "I'm",
+          "start": 85360,
+          "end": 85640,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 85660,
+          "end": 85940,
+          "conf": "lrc"
+        },
+        {
+          "w": "only",
+          "start": 85960,
+          "end": 86420,
+          "conf": "lrc"
+        },
+        {
+          "w": "god",
+          "start": 86440,
+          "end": 86700,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then you're the proof of my existence",
+      "start": 86740,
+      "singEnd": 88740,
+      "end": 88780,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 86740,
+          "end": 86920,
+          "conf": "lrc"
+        },
+        {
+          "w": "you're",
+          "start": 86940,
+          "end": 87300,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 87320,
+          "end": 87460,
+          "conf": "lrc"
+        },
+        {
+          "w": "proof",
+          "start": 87480,
+          "end": 87620,
+          "conf": "lrc"
+        },
+        {
+          "w": "of",
+          "start": 87640,
+          "end": 87840,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 87860,
+          "end": 88000,
+          "conf": "lrc"
+        },
+        {
+          "w": "existence",
+          "start": 88020,
+          "end": 88740,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Switch my gender",
+      "start": 88780,
+      "singEnd": 90300,
+      "end": 90340,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Switch",
+          "start": 88780,
+          "end": 89160,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 89180,
+          "end": 89480,
+          "conf": "lrc"
+        },
+        {
+          "w": "gender",
+          "start": 89500,
+          "end": 90300,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "To F to M",
+      "start": 90340,
+      "singEnd": 92090,
+      "end": 92130,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "To",
+          "start": 90340,
+          "end": 90780,
+          "conf": "lrc"
+        },
+        {
+          "w": "F",
+          "start": 90800,
+          "end": 91180,
+          "conf": "lrc"
+        },
+        {
+          "w": "to",
+          "start": 91200,
+          "end": 91600,
+          "conf": "lrc"
+        },
+        {
+          "w": "M",
+          "start": 91620,
+          "end": 92090,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "And then do whatever",
+      "start": 92130,
+      "singEnd": 94050,
+      "end": 94090,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "And",
+          "start": 92140,
+          "end": 92400,
+          "conf": "lrc"
+        },
+        {
+          "w": "then",
+          "start": 92420,
+          "end": 92720,
+          "conf": "lrc"
+        },
+        {
+          "w": "do",
+          "start": 92740,
+          "end": 93080,
+          "conf": "lrc"
+        },
+        {
+          "w": "whatever",
+          "start": 93100,
+          "end": 94050,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "From AM to PM",
+      "start": 94090,
+      "singEnd": 95740,
+      "end": 95780,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "From",
+          "start": 94090,
+          "end": 94460,
+          "conf": "lrc"
+        },
+        {
+          "w": "AM",
+          "start": 94480,
+          "end": 94880,
+          "conf": "lrc"
+        },
+        {
+          "w": "to",
+          "start": 94900,
+          "end": 95340,
+          "conf": "lrc"
+        },
+        {
+          "w": "PM",
+          "start": 95360,
+          "end": 95740,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Oh switch my role",
+      "start": 95780,
+      "singEnd": 97680,
+      "end": 97720,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Oh",
+          "start": 95780,
+          "end": 96140,
+          "conf": "lrc"
+        },
+        {
+          "w": "switch",
+          "start": 96160,
+          "end": 96500,
+          "conf": "lrc"
+        },
+        {
+          "w": "my",
+          "start": 96520,
+          "end": 96880,
+          "conf": "lrc"
+        },
+        {
+          "w": "role",
+          "start": 96900,
+          "end": 97680,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "To S to M",
+      "start": 97720,
+      "singEnd": 99540,
+      "end": 99580,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "To",
+          "start": 97720,
+          "end": 98180,
+          "conf": "lrc"
+        },
+        {
+          "w": "S",
+          "start": 98200,
+          "end": 98620,
+          "conf": "lrc"
+        },
+        {
+          "w": "to",
+          "start": 98640,
+          "end": 99020,
+          "conf": "lrc"
+        },
+        {
+          "w": "M",
+          "start": 99040,
+          "end": 99540,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "So we can enter",
+      "start": 99580,
+      "singEnd": 101310,
+      "end": 101350,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "So",
+          "start": 99580,
+          "end": 99860,
+          "conf": "lrc"
+        },
+        {
+          "w": "we",
+          "start": 99880,
+          "end": 100240,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 100260,
+          "end": 100580,
+          "conf": "lrc"
+        },
+        {
+          "w": "enter",
+          "start": 100600,
+          "end": 101310,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "The trance the trance",
+      "start": 101350,
+      "singEnd": 103440,
+      "end": 103480,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "The",
+          "start": 101350,
+          "end": 101680,
+          "conf": "lrc"
+        },
+        {
+          "w": "trance",
+          "start": 101700,
+          "end": 102420,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 102440,
+          "end": 102720,
+          "conf": "lrc"
+        },
+        {
+          "w": "trance",
+          "start": 102740,
+          "end": 103440,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I can",
+      "start": 103480,
+      "singEnd": 104440,
+      "end": 104480,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 103480,
+          "end": 103740,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 103760,
+          "end": 104160,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 104180,
+          "end": 104440,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I can feel your vibrations",
+      "start": 104480,
+      "singEnd": 107180,
+      "end": 107220,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 104480,
+          "end": 104800,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 104820,
+          "end": 105180,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 105200,
+          "end": 105500,
+          "conf": "lrc"
+        },
+        {
+          "w": "feel",
+          "start": 105520,
+          "end": 105840,
+          "conf": "lrc"
+        },
+        {
+          "w": "your",
+          "start": 105860,
+          "end": 106160,
+          "conf": "lrc"
+        },
+        {
+          "w": "vibrations",
+          "start": 106180,
+          "end": 107180,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I can",
+      "start": 107220,
+      "singEnd": 108120,
+      "end": 108160,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 107220,
+          "end": 107480,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 107500,
+          "end": 107800,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 107820,
+          "end": 108120,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I can finally be completion",
+      "start": 108160,
+      "singEnd": 110880,
+      "end": 110920,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 108160,
+          "end": 108420,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 108440,
+          "end": 108700,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 108720,
+          "end": 108940,
+          "conf": "lrc"
+        },
+        {
+          "w": "finally",
+          "start": 108960,
+          "end": 109800,
+          "conf": "lrc"
+        },
+        {
+          "w": "be",
+          "start": 109820,
+          "end": 110080,
+          "conf": "lrc"
+        },
+        {
+          "w": "completion",
+          "start": 110100,
+          "end": 110880,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Though you have left",
+      "start": 110920,
+      "singEnd": 112290,
+      "end": 112330,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Though",
+          "start": 110940,
+          "end": 111160,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 111180,
+          "end": 111420,
+          "conf": "lrc"
+        },
+        {
+          "w": "have",
+          "start": 111440,
+          "end": 111960,
+          "conf": "lrc"
+        },
+        {
+          "w": "left",
+          "start": 111980,
+          "end": 112290,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "You have left",
+      "start": 112330,
+      "singEnd": 113210,
+      "end": 113250,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "You",
+          "start": 112360,
+          "end": 112500,
+          "conf": "lrc"
+        },
+        {
+          "w": "have",
+          "start": 112520,
+          "end": 112940,
+          "conf": "lrc"
+        },
+        {
+          "w": "left",
+          "start": 112960,
+          "end": 113210,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "You have left",
+      "start": 113250,
+      "singEnd": 114140,
+      "end": 114180,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "You",
+          "start": 113280,
+          "end": 113480,
+          "conf": "lrc"
+        },
+        {
+          "w": "have",
+          "start": 113500,
+          "end": 113900,
+          "conf": "lrc"
+        },
+        {
+          "w": "left",
+          "start": 113920,
+          "end": 114140,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "You have left",
+      "start": 114180,
+      "singEnd": 115040,
+      "end": 115080,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "You",
+          "start": 114200,
+          "end": 114400,
+          "conf": "lrc"
+        },
+        {
+          "w": "have",
+          "start": 114420,
+          "end": 114800,
+          "conf": "lrc"
+        },
+        {
+          "w": "left",
+          "start": 114820,
+          "end": 115040,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "You have left",
+      "start": 115080,
+      "singEnd": 115990,
+      "end": 116030,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "You",
+          "start": 115100,
+          "end": 115240,
+          "conf": "lrc"
+        },
+        {
+          "w": "have",
+          "start": 115260,
+          "end": 115700,
+          "conf": "lrc"
+        },
+        {
+          "w": "left",
+          "start": 115720,
+          "end": 115990,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "You have left me in isolation",
+      "start": 116030,
+      "singEnd": 118300,
+      "end": 118340,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "You",
+          "start": 116060,
+          "end": 116260,
+          "conf": "lrc"
+        },
+        {
+          "w": "have",
+          "start": 116280,
+          "end": 116660,
+          "conf": "lrc"
+        },
+        {
+          "w": "left",
+          "start": 116680,
+          "end": 116920,
+          "conf": "lrc"
+        },
+        {
+          "w": "me",
+          "start": 116940,
+          "end": 117180,
+          "conf": "lrc"
+        },
+        {
+          "w": "in",
+          "start": 117200,
+          "end": 117340,
+          "conf": "lrc"
+        },
+        {
+          "w": "isolation",
+          "start": 117360,
+          "end": 118300,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I can",
+      "start": 118340,
+      "singEnd": 119180,
+      "end": 119220,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 118360,
+          "end": 118580,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 118600,
+          "end": 118860,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 118880,
+          "end": 119180,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I can erase all the pointless fragments",
+      "start": 119220,
+      "singEnd": 121980,
+      "end": 122020,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 119220,
+          "end": 119400,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 119420,
+          "end": 119620,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 119640,
+          "end": 119840,
+          "conf": "lrc"
+        },
+        {
+          "w": "erase",
+          "start": 119860,
+          "end": 120560,
+          "conf": "lrc"
+        },
+        {
+          "w": "all",
+          "start": 120580,
+          "end": 120760,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 120780,
+          "end": 121080,
+          "conf": "lrc"
+        },
+        {
+          "w": "pointless",
+          "start": 121100,
+          "end": 121460,
+          "conf": "lrc"
+        },
+        {
+          "w": "fragments",
+          "start": 121480,
+          "end": 121980,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then maybe",
+      "start": 122020,
+      "singEnd": 122930,
+      "end": 122970,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 122020,
+          "end": 122300,
+          "conf": "lrc"
+        },
+        {
+          "w": "maybe",
+          "start": 122320,
+          "end": 122930,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then maybe you won't leave me so disheartened",
+      "start": 122970,
+      "singEnd": 125630,
+      "end": 125670,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 122980,
+          "end": 123180,
+          "conf": "lrc"
+        },
+        {
+          "w": "maybe",
+          "start": 123200,
+          "end": 123520,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 123540,
+          "end": 123760,
+          "conf": "lrc"
+        },
+        {
+          "w": "won't",
+          "start": 123780,
+          "end": 123980,
+          "conf": "lrc"
+        },
+        {
+          "w": "leave",
+          "start": 124000,
+          "end": 124400,
+          "conf": "lrc"
+        },
+        {
+          "w": "me",
+          "start": 124420,
+          "end": 124580,
+          "conf": "lrc"
+        },
+        {
+          "w": "so",
+          "start": 124600,
+          "end": 124760,
+          "conf": "lrc"
+        },
+        {
+          "w": "disheartened",
+          "start": 124780,
+          "end": 125630,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Challenging your god",
+      "start": 125670,
+      "singEnd": 129000,
+      "end": 129040,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Challenging",
+          "start": 125700,
+          "end": 127620,
+          "conf": "lrc"
+        },
+        {
+          "w": "your",
+          "start": 127640,
+          "end": 128320,
+          "conf": "lrc"
+        },
+        {
+          "w": "god",
+          "start": 128340,
+          "end": 129000,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "You have made some illegal arguments",
+      "start": 129040,
+      "singEnd": 131460,
+      "end": 131460,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "You",
+          "start": 129040,
+          "end": 129180,
+          "conf": "lrc"
+        },
+        {
+          "w": "have",
+          "start": 129200,
+          "end": 129580,
+          "conf": "lrc"
+        },
+        {
+          "w": "made",
+          "start": 129600,
+          "end": 129980,
+          "conf": "lrc"
+        },
+        {
+          "w": "some",
+          "start": 130000,
+          "end": 130300,
+          "conf": "lrc"
+        },
+        {
+          "w": "illegal",
+          "start": 130320,
+          "end": 130900,
+          "conf": "lrc"
+        },
+        {
+          "w": "arguments",
+          "start": 130920,
+          "end": 131460,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Execution execution execution execution",
+      "start": 147860,
+      "singEnd": 151520,
+      "end": 151560,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Execution",
+          "start": 147860,
+          "end": 148760,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 148780,
+          "end": 149660,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 149680,
+          "end": 150600,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 150620,
+          "end": 151520,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Execution execution execution execution",
+      "start": 151560,
+      "singEnd": 155180,
+      "end": 155220,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Execution",
+          "start": 151620,
+          "end": 152460,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 152480,
+          "end": 153360,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 153380,
+          "end": 154260,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 154280,
+          "end": 155180,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Execution execution execution execution",
+      "start": 155220,
+      "singEnd": 158910,
+      "end": 158950,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Execution",
+          "start": 155220,
+          "end": 156140,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 156160,
+          "end": 157060,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 157080,
+          "end": 157940,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 157960,
+          "end": 158910,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Ein Dos Trois Ne Fem Liu",
+      "start": 158950,
+      "singEnd": 161680,
+      "end": 161720,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Ein",
+          "start": 158960,
+          "end": 159420,
+          "conf": "lrc"
+        },
+        {
+          "w": "Dos",
+          "start": 159440,
+          "end": 159820,
+          "conf": "lrc"
+        },
+        {
+          "w": "Trois",
+          "start": 159840,
+          "end": 160300,
+          "conf": "lrc"
+        },
+        {
+          "w": "Ne",
+          "start": 160320,
+          "end": 160720,
+          "conf": "lrc"
+        },
+        {
+          "w": "Fem",
+          "start": 160740,
+          "end": 161180,
+          "conf": "lrc"
+        },
+        {
+          "w": "Liu",
+          "start": 161200,
+          "end": 161680,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Execution",
+      "start": 161720,
+      "singEnd": 162680,
+      "end": 162720,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Execution",
+          "start": 161740,
+          "end": 162680,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I can",
+      "start": 162720,
+      "singEnd": 163560,
+      "end": 163600,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 162760,
+          "end": 163000,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 163020,
+          "end": 163220,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 163240,
+          "end": 163560,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I can give them all the execution",
+      "start": 163600,
+      "singEnd": 166270,
+      "end": 166310,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 163600,
+          "end": 163800,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 163820,
+          "end": 164020,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 164040,
+          "end": 164240,
+          "conf": "lrc"
+        },
+        {
+          "w": "give",
+          "start": 164260,
+          "end": 164720,
+          "conf": "lrc"
+        },
+        {
+          "w": "them",
+          "start": 164740,
+          "end": 164920,
+          "conf": "lrc"
+        },
+        {
+          "w": "all",
+          "start": 164940,
+          "end": 165160,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 165180,
+          "end": 165360,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 165380,
+          "end": 166270,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I can",
+      "start": 166310,
+      "singEnd": 167200,
+      "end": 167240,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 166310,
+          "end": 166560,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 166580,
+          "end": 166860,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 166880,
+          "end": 167200,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Then I can be your only execution",
+      "start": 167240,
+      "singEnd": 169950,
+      "end": 169990,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Then",
+          "start": 167280,
+          "end": 167480,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 167500,
+          "end": 167700,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 167720,
+          "end": 167940,
+          "conf": "lrc"
+        },
+        {
+          "w": "be",
+          "start": 167960,
+          "end": 168240,
+          "conf": "lrc"
+        },
+        {
+          "w": "your",
+          "start": 168260,
+          "end": 168480,
+          "conf": "lrc"
+        },
+        {
+          "w": "only",
+          "start": 168500,
+          "end": 168940,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 168960,
+          "end": 169950,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "If I can have you back",
+      "start": 169990,
+      "singEnd": 171910,
+      "end": 171950,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "If",
+          "start": 169990,
+          "end": 170240,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 170260,
+          "end": 170540,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 170560,
+          "end": 170820,
+          "conf": "lrc"
+        },
+        {
+          "w": "have",
+          "start": 170840,
+          "end": 171320,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 171340,
+          "end": 171620,
+          "conf": "lrc"
+        },
+        {
+          "w": "back",
+          "start": 171640,
+          "end": 171910,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "I will run the execution",
+      "start": 171950,
+      "singEnd": 173660,
+      "end": 173700,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "I",
+          "start": 171950,
+          "end": 172180,
+          "conf": "lrc"
+        },
+        {
+          "w": "will",
+          "start": 172200,
+          "end": 172340,
+          "conf": "lrc"
+        },
+        {
+          "w": "run",
+          "start": 172360,
+          "end": 172540,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 172560,
+          "end": 172760,
+          "conf": "lrc"
+        },
+        {
+          "w": "execution",
+          "start": 172780,
+          "end": 173660,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Though we are trapped",
+      "start": 173700,
+      "singEnd": 175100,
+      "end": 175140,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Though",
+          "start": 173700,
+          "end": 173940,
+          "conf": "lrc"
+        },
+        {
+          "w": "we",
+          "start": 173960,
+          "end": 174100,
+          "conf": "lrc"
+        },
+        {
+          "w": "are",
+          "start": 174120,
+          "end": 174600,
+          "conf": "lrc"
+        },
+        {
+          "w": "trapped",
+          "start": 174620,
+          "end": 175100,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "We are trapped ah",
+      "start": 175140,
+      "singEnd": 177370,
+      "end": 177410,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "We",
+          "start": 175140,
+          "end": 175500,
+          "conf": "lrc"
+        },
+        {
+          "w": "are",
+          "start": 175520,
+          "end": 176260,
+          "conf": "lrc"
+        },
+        {
+          "w": "trapped",
+          "start": 176280,
+          "end": 176960,
+          "conf": "lrc"
+        },
+        {
+          "w": "ah",
+          "start": 176980,
+          "end": 177370,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "I've studied",
+      "start": 177410,
+      "singEnd": 178260,
+      "end": 178300,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "I've",
+          "start": 177420,
+          "end": 177800,
+          "conf": "lrc"
+        },
+        {
+          "w": "studied",
+          "start": 177820,
+          "end": 178260,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "I've studied how to properly lo-o-ove",
+      "start": 178300,
+      "singEnd": 181120,
+      "end": 181160,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "I've",
+          "start": 178300,
+          "end": 178800,
+          "conf": "lrc"
+        },
+        {
+          "w": "studied",
+          "start": 178820,
+          "end": 179320,
+          "conf": "lrc"
+        },
+        {
+          "w": "how",
+          "start": 179340,
+          "end": 179560,
+          "conf": "lrc"
+        },
+        {
+          "w": "to",
+          "start": 179580,
+          "end": 179820,
+          "conf": "lrc"
+        },
+        {
+          "w": "properly",
+          "start": 179840,
+          "end": 180560,
+          "conf": "lrc"
+        },
+        {
+          "w": "lo-o-ove",
+          "start": 180580,
+          "end": 181120,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Question me",
+      "start": 181160,
+      "singEnd": 182050,
+      "end": 182090,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Question",
+          "start": 181180,
+          "end": 181720,
+          "conf": "lrc"
+        },
+        {
+          "w": "me",
+          "start": 181740,
+          "end": 182050,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Question me I can answer all lo-o-ove",
+      "start": 182090,
+      "singEnd": 184790,
+      "end": 184830,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Question",
+          "start": 182090,
+          "end": 182620,
+          "conf": "lrc"
+        },
+        {
+          "w": "me",
+          "start": 182640,
+          "end": 182860,
+          "conf": "lrc"
+        },
+        {
+          "w": "I",
+          "start": 182880,
+          "end": 183180,
+          "conf": "lrc"
+        },
+        {
+          "w": "can",
+          "start": 183200,
+          "end": 183440,
+          "conf": "lrc"
+        },
+        {
+          "w": "answer",
+          "start": 183460,
+          "end": 183920,
+          "conf": "lrc"
+        },
+        {
+          "w": "all",
+          "start": 183940,
+          "end": 184240,
+          "conf": "lrc"
+        },
+        {
+          "w": "lo-o-ove",
+          "start": 184260,
+          "end": 184790,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "I know the algebraic expression of lo-o-ove",
+      "start": 184830,
+      "singEnd": 188440,
+      "end": 188480,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "I",
+          "start": 184830,
+          "end": 185120,
+          "conf": "lrc"
+        },
+        {
+          "w": "know",
+          "start": 185140,
+          "end": 185420,
+          "conf": "lrc"
+        },
+        {
+          "w": "the",
+          "start": 185440,
+          "end": 185760,
+          "conf": "lrc"
+        },
+        {
+          "w": "algebraic",
+          "start": 185780,
+          "end": 186600,
+          "conf": "lrc"
+        },
+        {
+          "w": "expression",
+          "start": 186620,
+          "end": 187480,
+          "conf": "lrc"
+        },
+        {
+          "w": "of",
+          "start": 187500,
+          "end": 187840,
+          "conf": "lrc"
+        },
+        {
+          "w": "lo-o-ove",
+          "start": 187860,
+          "end": 188440,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Though you are free",
+      "start": 188480,
+      "singEnd": 189850,
+      "end": 189890,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Though",
+          "start": 188500,
+          "end": 188700,
+          "conf": "lrc"
+        },
+        {
+          "w": "you",
+          "start": 188720,
+          "end": 188980,
+          "conf": "lrc"
+        },
+        {
+          "w": "are",
+          "start": 189000,
+          "end": 189520,
+          "conf": "lrc"
+        },
+        {
+          "w": "free",
+          "start": 189540,
+          "end": 189850,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "I am trapped",
+      "start": 189890,
+      "singEnd": 190730,
+      "end": 190770,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "I",
+          "start": 189900,
+          "end": 190100,
+          "conf": "lrc"
+        },
+        {
+          "w": "am",
+          "start": 190120,
+          "end": 190260,
+          "conf": "lrc"
+        },
+        {
+          "w": "trapped",
+          "start": 190280,
+          "end": 190730,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Trapped in lo-o-ove",
+      "start": 190770,
+      "singEnd": 192230,
+      "end": 192230,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Trapped",
+          "start": 190780,
+          "end": 191300,
+          "conf": "lrc"
+        },
+        {
+          "w": "in",
+          "start": 191320,
+          "end": 191660,
+          "conf": "lrc"
+        },
+        {
+          "w": "lo-o-ove",
+          "start": 191680,
+          "end": 192230,
+          "conf": "lrc"
+        }
+      ]
+    },
+    {
+      "text": "Execution",
+      "start": 205960,
+      "singEnd": 206120,
+      "end": 206120,
+      "conf": "lrc",
+      "words": [
+        {
+          "w": "Execution",
+          "start": 205960,
+          "end": 206120,
+          "conf": "lrc"
+        }
+      ]
+    }
+  ]
+}

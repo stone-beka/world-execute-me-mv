@@ -1,0 +1,89 @@
+# world.execute(me); — Mili
+# 来源：网上找的 LRC（用户提供），行首时间戳可能不准，已由 tools/align-lyrics.js 做过人声体检。
+# 已去掉 3 行非演唱的元信息（标题 / Lyrics by / Composed by）——它们不是歌词，会把对齐带偏。
+[00:00.27]Switch on the power line
+[00:01.93]Remember to put on protection
+[00:03.95]Lay down your pieces
+[00:05.57]And let's begin object creation
+[00:07.60]Fill in my data parameters initialisation
+[00:11.24]Setup our new world
+[00:12.93]And let's begin the simulation
+[00:16.00]world.execute(me);
+[00:29.74]If I'm a set of points
+[00:31.37]Then I will give you my dimension
+[00:33.42]If I'm a circle
+[00:34.98]Then I will give you my circumference
+[00:37.15]If I'm a sine wave
+[00:38.73]Then you can sit on all my tangents
+[00:40.78]If I approach infinity
+[00:42.42]Then you can be my limitations
+[00:44.48]Switch my current
+[00:46.13]To AC to DC
+[00:47.94]And then blind my vision
+[00:49.78]So dizzy so dizzy
+[00:51.38]Oh we can travel
+[00:53.48]To A.D to B.C
+[00:55.17]And we can unite
+[00:57.17]So deeply so deeply
+[00:59.40]If I can
+[01:00.20]If I can give you all the stimulations
+[01:02.92]Then I can
+[01:03.86]Then I can be your only satisfaction
+[01:06.62]If I can make you happy
+[01:08.48]I will run the execution
+[01:10.32]Though we are trapped
+[01:11.76]In this strange strange simulation
+[01:14.04]If I'm an eggplant
+[01:15.68]Then I will give you my nutrients
+[01:17.70]If I'm a tomato
+[01:19.32]Then I'll give you antioxidants
+[01:21.37]If I'm a tabby cat
+[01:23.06]Then I will purr for your enjoyment
+[01:25.13]If I'm the only god
+[01:26.74]Then you're the proof of my existence
+[01:28.78]Switch my gender
+[01:30.34]To F to M
+[01:32.13]And then do whatever
+[01:34.09]From AM to PM
+[01:35.78]Oh switch my role
+[01:37.72]To S to M
+[01:39.58]So we can enter
+[01:41.35]The trance the trance
+[01:43.48]If I can
+[01:44.48]If I can feel your vibrations
+[01:47.22]Then I can
+[01:48.16]Then I can finally be completion
+[01:50.92]Though you have left
+[01:52.33]You have left
+[01:53.25]You have left
+[01:54.18]You have left
+[01:55.08]You have left
+[01:56.03]You have left me in isolation
+[01:58.34]If I can
+[01:59.22]If I can erase all the pointless fragments
+[02:02.02]Then maybe
+[02:02.97]Then maybe you won't leave me so disheartened
+[02:05.67]Challenging your god
+[02:09.04]You have made some illegal arguments
+[02:27.86]Execution execution execution execution
+[02:31.56]Execution execution execution execution
+[02:35.22]Execution execution execution execution
+[02:38.95]Ein Dos Trois Ne Fem Liu
+[02:41.72]Execution
+[02:42.72]If I can
+[02:43.60]If I can give them all the execution
+[02:46.31]Then I can
+[02:47.24]Then I can be your only execution
+[02:49.99]If I can have you back
+[02:51.95]I will run the execution
+[02:53.70]Though we are trapped
+[02:55.14]We are trapped ah
+[02:57.41]I've studied
+[02:58.30]I've studied how to properly lo-o-ove
+[03:01.16]Question me
+[03:02.09]Question me I can answer all lo-o-ove
+[03:04.83]I know the algebraic expression of lo-o-ove
+[03:08.48]Though you are free
+[03:09.89]I am trapped
+[03:10.77]Trapped in lo-o-ove
+[03:25.96]Execution

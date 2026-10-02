@@ -1,0 +1,67 @@
+{
+  "bpm": 130,
+  "periodMs": 461.538462,
+  "beatOffsetMs": 459.7,
+  "beatsPerBar": 4,
+  "barPhase": null,
+  "firstBeatMs": 459.7,
+  "lastBeatMs": 211844.32,
+  "beatCount": 459,
+  "source": "assets/onsets.json",
+  "validation": {
+    "residual": {
+      "count": 1319,
+      "meanAbs": 101.332,
+      "withinTol": 387,
+      "pctWithinTol": 29.3,
+      "medianAbs": 103.287,
+      "p90Abs": 213.405,
+      "maxAbs": 230.736,
+      "tolMs": 25
+    },
+    "drift": [
+      {
+        "index": 0,
+        "startMs": 0,
+        "endMs": 53000,
+        "count": 385,
+        "phaseMs": 21.544,
+        "concentration": 0.3324,
+        "medianAbsMs": 102.848
+      },
+      {
+        "index": 1,
+        "startMs": 53000,
+        "endMs": 106000,
+        "count": 218,
+        "phaseMs": -7.33,
+        "concentration": 0.2832,
+        "medianAbsMs": 77.492
+      },
+      {
+        "index": 2,
+        "startMs": 106000,
+        "endMs": 159000,
+        "count": 448,
+        "phaseMs": 17.434,
+        "concentration": 0.2562,
+        "medianAbsMs": 112.269
+      },
+      {
+        "index": 3,
+        "startMs": 159000,
+        "endMs": 212000,
+        "count": 268,
+        "phaseMs": 20.633,
+        "concentration": 0.3567,
+        "medianAbsMs": 86.766
+      }
+    ]
+  },
+  "corrected": {
+    "bpm": 130.0007,
+    "driftMs": -0.91,
+    "spanMs": 159000
+  },
+  "generatedAt": "STATIC"
+}

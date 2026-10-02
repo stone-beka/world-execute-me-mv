@@ -1,0 +1,37 @@
+{
+  "title": "world.execute(me);",
+  "artist": "Mili",
+  "album": "Miracle Milk",
+  "_note": "全片唯一的时间真相源。所有画板只允许通过 timeline.js 读取这里，禁止各自写死 BPM。",
+
+  "width": 1920,
+  "height": 1080,
+  "fps": 60,
+
+  "bpm": 130,
+  "beatsPerBar": 4,
+  "_bpmSource": "songbpm / musicstax / songdata 三处一致：130 BPM, D minor, 约 3:31",
+
+  "audio": "assets/audio/world.execute(me);.wav",
+  "durationMs": 212000,
+  "_durationNote": "同人 PV 抽出的音频裁掉 24.6s 数字静音尾巴后正好 3:32.000；有效声音 0:00.283→3:31.897，与原版单曲 3:31 吻合。",
+
+  "beatOffsetMs": 459.7,
+  "_beatOffsetHint": "✅ 已确认。低频踢鼓相位搜索算出 459.7ms（锐度 2.87，整曲首尾漂移 6.0ms），用户 2026-09-28 听 sweep-off0460 确认最贴合。",
+
+  "barPhase": 3,
+  "_barPhaseHint": "✅ 已确认（2026-09-28）：4 拍里第 3 拍是「1」（bar3-of-4.m4a 最像乐句开头）。s.bar / s.barPhase 现在有音乐意义（当前没有画板用到）。注意：重跑 analyze:structure 会按新相位重新切段落、边界会移位，所以没重跑——画板区间是对着旧段落表写死的。",
+
+  "seed": 20161012,
+  "_seedHint": "改 seed = 换一个平行宇宙。同 seed + 同帧号 = 同像素。",
+
+  "floor": true,
+  "_floorHint": "常驻「地板」：叠在画板之上的一层极轻、永不静止的底噪（src/core/floor.js）。开着它可消灭全片静止段，但会让每一帧像素都变。临时开关：preview/render/gap-check 加 --floor 或 --no-floor；强度在 src/core/floor.js 顶部 INTENSITY。",
+  "colors": {
+    "bg": "#05070a",
+    "fg": "#c8f0e8",
+    "accent": "#39ff88",
+    "warn": "#ffcc00",
+    "danger": "#ff3b5c"
+  }
+}

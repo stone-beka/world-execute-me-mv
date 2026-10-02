@@ -1,0 +1,44 @@
+{
+  "file": "world.execute(me);.wav",
+  "sampleRate": 44100,
+  "channels": 2,
+  "durationMs": 212000,
+  "musicStartMs": 316,
+  "musicEndMs": 207630,
+  "musicDurationMs": 207314,
+  "bpm": 130.0043,
+  "bpmConfidence": 0.0175,
+  "bpmCandidates": [
+    {
+      "bpm": 130.14,
+      "score": 0.701
+    },
+    {
+      "bpm": 65.07,
+      "score": 0.6888
+    },
+    {
+      "bpm": 86.76,
+      "score": 0.4973
+    },
+    {
+      "bpm": 187.076,
+      "score": 0.4884
+    },
+    {
+      "bpm": 76.26,
+      "score": 0.4717
+    }
+  ],
+  "beatOffsetMs": 459.71,
+  "beatOffsetContrast": 2.8719,
+  "beatOffsetTrustworthy": true,
+  "beatOffsetRivalMs": 607.71,
+  "beatOffsetRivalRatio": 0.4221,
+  "onsetCount": 1319,
+  "leadingNonMusicMs": 316,
+  "trailingNonMusicMs": 4370,
+  "firstAudibleSampleMs": 282.9,
+  "lastAudibleSampleMs": 211896.67,
+  "tailDigitalSilenceMs": 103.33
+}

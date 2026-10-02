@@ -1,0 +1,40 @@
+{
+  "name": "world-execute-me-mv",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Code-driven MV for Mili - world.execute(me);  Deterministic frame-by-frame render pipeline.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "smoke": "node tools/smoke.js",
+    "preview": "node tools/preview.js",
+    "probe:audio": "node tools/probe-audio.js",
+    "beat:check": "node tools/beat-check.js",
+    "detect:onsets": "node tools/onset-detect.js",
+    "align:beat": "node tools/align-beat.js",
+    "analyze:structure": "node tools/analyze-structure.js",
+    "align:lyrics": "node tools/align-lyrics.js",
+    "make:treatment": "node tools/make-treatment.js",
+    "parse:midi": "node tools/parse-midi.js",
+    "render": "node tools/render-frames.js",
+    "watch:render": "node tools/watch-render.js",
+    "inspect": "node tools/inspect.js",
+    "elements": "node tools/elements.js",
+    "query": "node tools/query.js",
+    "overview": "node tools/overview.js",
+    "audit:elements": "node tools/registry-audit.js",
+    "verify:static": "node verify/static-check.js",
+    "verify:gap": "node verify/gap-check.js",
+    "verify:ink": "node verify/ink-check.js",
+    "verify:determinism": "node verify/determinism-check.js",
+    "verify": "npm run verify:static && npm run verify:gap && npm run verify:ink && npm run verify:determinism"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.80",
+    "@tonejs/midi": "^2.0.28",
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0"
+  }
+}

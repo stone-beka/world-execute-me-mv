@@ -1,0 +1,23 @@
+# 歌词文件格式示例 —— 这是格式，不是真歌词，里面的字是占位的。
+#
+# 用法：复制成 assets/lyrics.txt，把你的歌词填进去，然后跑
+#         npm run align:lyrics
+#
+# 两种写法（可以混用）：
+#
+#   ① 纯文本：一行一句。机器用音频里 300~3400Hz 的能量段找「在唱」的区间，
+#      再按字数把句子铺进去 —— 这是候选，必须人耳复核。
+#
+#   ② LRC 时间戳：行首 [mm:ss.xx]，行时间是准的，只推断词级细分。
+#      [01:40.00] 这一行的时间是准的
+#
+# 空行和 # 开头的行会被忽略。
+
+line one placeholder words here
+line two placeholder words here
+line three placeholder words here
+line four placeholder words here
+line five placeholder words here
+line six placeholder words here
+
+# [00:12.34] 想更准就写成这样（时间戳 + 空格 + 歌词）

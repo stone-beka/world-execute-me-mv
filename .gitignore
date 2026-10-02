@@ -1,0 +1,18 @@
+node_modules/
+out/
+frames/
+*.log
+
+# 源素材体积大 / 有版权，不进版本库
+assets/audio/
+assets/video/
+assets/*.mid
+assets/*.midi
+assets/*.mp3
+assets/*.wav
+assets/*.flac
+assets/*.m4a
+
+# 生成物：由 tools/parse-midi.js 产出，可随时重建
+assets/onsets.js
+assets/onsets.json
