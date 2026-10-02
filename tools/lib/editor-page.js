@@ -50,7 +50,7 @@ export function renderEditorPage({ scene, info, blocks }) {
   #tl .t.l{background:#2f6b47}
   #tlplay{position:absolute;top:0;width:2px;height:100%;background:#ff6070;box-shadow:0 0 6px #ff6070}
   #lanes{position:relative;margin-bottom:6px}
-  .lane{position:relative;height:20px;background:#0e0e12;border:1px solid #22222a;border-radius:3px;margin-top:3px;overflow:hidden}
+  .lane{position:relative;height:20px;background:#0e0e12;border:1px solid #22222a;border-radius:3px;margin-top:3px;overflow:visible}
   .lane .lbl{position:absolute;left:4px;top:0;font-size:10px;color:#8b8b93;z-index:3;line-height:20px;pointer-events:none}
   .lane .seg{position:absolute;top:0;height:100%;opacity:.8;border-right:1px solid #00000066}
   .lane .seg.static{background:#22222a}
@@ -226,8 +226,8 @@ window.__DATA__ = ${data};
     var hk=handleAt(c.x,c.y);
     if(hk){ var b=elementBox(curEl()); resize={ id:sel, corner:hk, box:b, fixed: fixedCorner(b,hk) }; return; }
     var hit=hitTest(c.x,c.y);
-    if(hit){ sel=hit; renderProps(); renderTracks(); renderTools(); var el=byId(hit); drag={id:hit,sx:c.x,sy:c.y,ax:el.at.x,ay:el.at.y,moved:false}; drawOverlay(); }
-    else { sel=null; renderProps(); renderTracks(); renderTools(); drawOverlay(); }
+    if(hit){ sel=hit; rebuildPanels(); var el=byId(hit); drag={id:hit,sx:c.x,sy:c.y,ax:el.at.x,ay:el.at.y,moved:false}; drawOverlay(); }
+    else { sel=null; rebuildPanels(); drawOverlay(); }
   });
   function fixedCorner(b,k){ return { tl:{x:b.x+b.w,y:b.y+b.h}, tr:{x:b.x,y:b.y+b.h}, bl:{x:b.x+b.w,y:b.y}, br:{x:b.x,y:b.y} }[k]; }
   document.addEventListener('mousemove', function(e){
@@ -261,7 +261,7 @@ window.__DATA__ = ${data};
     var el={ id:uid(block), block:block, params:defaultParams(block), at:{x:Math.round(b.x+b.w/2),y:Math.round(b.y+b.h/2),scale:1,rot:0,alpha:1},
              life:{inMs:0,outMs:SCENE.durationMs,fadeInMs:0,fadeOutMs:0}, tracks:[], z:0, notes:'' };
     applyBox(el, b);
-    SCENE.elements.push(el); sel=el.id; dirty=true; renderProps(); renderTracks(); renderTools(); refreshFrame();
+    SCENE.elements.push(el); sel=el.id; dirty=true; rebuildPanels(); refreshFrame();
   }
 
   // ---- 属性 ----
@@ -286,7 +286,7 @@ window.__DATA__ = ${data};
     var li=document.getElementById('lifeIn'),lo=document.getElementById('lifeOut'),de=document.getElementById('delEl');
     if(li)li.onclick=function(){el.life.inMs=Math.round(ms);dirty=true;renderProps();refreshFrame();};
     if(lo)lo.onclick=function(){el.life.outMs=Math.round(ms);dirty=true;renderProps();refreshFrame();};
-    if(de)de.onclick=function(){SCENE.elements=SCENE.elements.filter(function(x){return x.id!==el.id;});sel=null;dirty=true;renderProps();renderTracks();renderTools();refreshFrame();};
+    if(de)de.onclick=function(){SCENE.elements=SCENE.elements.filter(function(x){return x.id!==el.id;});sel=null;dirty=true;rebuildPanels();refreshFrame();};
   }
   function fxSchema(n){for(var i=0;i<BLOCKS.fx.length;i++)if(BLOCKS.fx[i].name===n)return BLOCKS.fx[i];return null;}
   function renderTracks(){
@@ -338,14 +338,15 @@ window.__DATA__ = ${data};
     var t=e.target,f=t.dataset&&t.dataset.f;if(!f)return;var el=byId(t.dataset.el);if(!el)return;
     var v=t.type==='number'?Number(t.value):t.value;
     if(t.dataset.ti!=null)setPath(el.tracks[Number(t.dataset.ti)],f,v);else{setPath(el,f,v);if(f==='id')sel=el.id;}
-    dirty=true; refreshFrame();
+    dirty=true; lanesRender(); refreshFrame();
   });
 
   // ---- 刷新 ----
   function refreshResolve(cb){fetch('/resolve?ms='+Math.round(ms)).then(function(r){return r.json();}).then(function(d){resolved=d.items;if(cb)cb();}).catch(function(){});}
   function syncScene(cb){ if(!dirty){cb();return;} fetch('/working',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(SCENE)}).then(function(r){return r.json();}).then(function(d){ if(d.ok)dirty=false; else toast('同步失败：'+(d.error||'未知'),true); cb(); }).catch(function(){cb();}); }
   function refreshFrame(){ syncScene(function(){ img.src='/frame?ms='+Math.round(ms)+'&t='+(++frameSeq); document.getElementById('tlabel').textContent=fmt(ms); var s=currentSection(ms),l=currentLyric(ms); document.getElementById('seclabel').textContent=s?s.name:'—'; document.getElementById('lyrlabel').textContent=l?l.text:'（器乐）'; refreshResolve(drawOverlay); }); }
-  function rebuild(){renderProps();renderTracks();renderTools();lanesRender();refreshFrame();}
+  function rebuildPanels(){renderProps();renderTracks();renderTools();lanesRender();}
+  function rebuild(){rebuildPanels();refreshFrame();}
 
   // ---- 时间轴：滚轮缩放 + 播放 ----
   var tl = document.getElementById('tl');
@@ -430,10 +431,11 @@ window.__DATA__ = ${data};
     segs.forEach(function(sg){
       var l=pct(sg.startMs), w=((sg.endMs-sg.startMs)/view.span)*100;
       if(l+w<0||l>100) return;
+      var cl=Math.max(0,Math.min(100,l)), cw=Math.max(0.3,Math.min(100-cl,w));
       var sel=(laneSel&&laneSel.kind===sg.kind&&Math.abs(laneSel.s-sg.startMs)<0.5&&Math.abs(laneSel.e-sg.endMs)<0.5)?' sel':'';
-      h+='<div class="seg '+colFor(sg.kind,sg.type)+sel+'" data-lane="'+laneId+'" data-s="'+sg.startMs+'" data-e="'+sg.endMs+'" style="left:'+Math.max(-1,l)+'%;width:'+Math.min(102,w)+'%"></div>';
+      h+='<div class="seg '+colFor(sg.kind,sg.type)+sel+'" data-lane="'+laneId+'" data-s="'+sg.startMs+'" data-e="'+sg.endMs+'" style="left:'+cl+'%;width:'+cw+'%"></div>';
     });
-    (handles||[]).forEach(function(t){ var l=pct(t); if(l<-1||l>101)return; h+='<div class="hnd'+(laneId==='life'?' life':'')+'" data-lane="'+laneId+'" data-time="'+t+'" style="left:'+l+'%"></div>'; });
+    (handles||[]).forEach(function(hd){ var t=(hd&&hd.t!=null)?hd.t:hd; var side=(hd&&hd.side)?(' data-side="'+hd.side+'"'):''; var l=pct(t); if(l<-1||l>101)return; h+='<div class="hnd'+(laneId==='life'?' life':'')+'" data-lane="'+laneId+'" data-time="'+t+'"'+side+' style="left:'+l+'%"></div>'; });
     h+='</div>';
     return h;
   }
@@ -441,7 +443,7 @@ window.__DATA__ = ${data};
     var host=document.getElementById('lanes'); var el=curEl();
     if(!el){ host.innerHTML='<div class="hint" style="padding:3px 0">选中一个元素后，这里显示它的「生命 / 轨迹 / 缩放 / 特效」行</div>'; return; }
     var html='';
-    html+=laneRow('life','生命',[{kind:'life',startMs:el.life.inMs,endMs:el.life.outMs}],[el.life.inMs,el.life.outMs]);
+    html+=laneRow('life','生命',[{kind:'life',startMs:el.life.inMs,endMs:el.life.outMs}],[{t:el.life.inMs,side:'in'},{t:el.life.outMs,side:'out'}]);
     var shown=shownLanes[el.id]||{};
     ['move','scale','fx'].forEach(function(kind){
       var has=el.tracks.some(function(tr){return tr.kind===kind;});
@@ -459,7 +461,7 @@ window.__DATA__ = ${data};
       row.addEventListener('dblclick', function(e){ var kind=row.dataset.lane; if(kind==='life')return; addCut(el,kind,timeAt(e)); lanesRender(); });
     });
     host.querySelectorAll('.hnd').forEach(function(hn){
-      hn.addEventListener('mousedown', function(e){ e.preventDefault(); e.stopPropagation(); laneDrag={ lane:hn.dataset.lane, t:Number(hn.dataset.time) }; });
+      hn.addEventListener('mousedown', function(e){ e.preventDefault(); e.stopPropagation(); laneDrag={ lane:hn.dataset.lane, t:Number(hn.dataset.time), side:hn.dataset.side||null }; });
     });
   }
   function timeAt(e){ var r=document.getElementById('tl').getBoundingClientRect(); return view.start + Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*view.span; }
@@ -496,19 +498,30 @@ window.__DATA__ = ${data};
     el.tracks.forEach(function(tr){ var s=Math.max(el.life.inMs,tr.startMs),e=Math.min(el.life.outMs,tr.startMs+tr.durMs); tr.startMs=s; tr.durMs=Math.max(1,e-s); });
     el.tracks=el.tracks.filter(function(tr){return tr.durMs>1 && tr.startMs>=el.life.inMs-1 && tr.startMs<el.life.outMs;});
   }
+  function lifeLimitStart(el){ var m=Infinity; el.tracks.forEach(function(tr){m=Math.min(m,tr.startMs);}); ['move','scale','fx'].forEach(function(k){((el.cuts&&el.cuts[k])||[]).forEach(function(c){m=Math.min(m,c);});}); return m; }
+  function lifeLimitEnd(el){ var m=-Infinity; el.tracks.forEach(function(tr){m=Math.max(m,tr.startMs+tr.durMs);}); ['move','scale','fx'].forEach(function(k){((el.cuts&&el.cuts[k])||[]).forEach(function(c){m=Math.max(m,c);});}); return m; }
   document.addEventListener('mousemove', function(e){
     if(!laneDrag) return;
     var el=curEl(); if(!el){ laneDrag=null; return; }
     var t2=timeAt(e);
     if(laneDrag.lane==='life'){
-      if(Math.abs(laneDrag.t-el.life.inMs)<1) el.life.inMs=Math.max(0,Math.min(el.life.outMs-1,Math.round(t2)));
-      else el.life.outMs=Math.max(el.life.inMs+1,Math.min(INFO.durationMs,Math.round(t2)));
+      var isIn = laneDrag.side==='in';
+      var nt=Math.round(t2);
+      if(isIn){
+        nt=Math.max(0,Math.min(el.life.outMs-1,nt));
+        if(nt>lifeLimitStart(el)-1){ toast('无法移动：先把它下面轨迹/特效行的起点往后拖',true); return; }
+        el.life.inMs=nt; laneDrag.t=nt;
+      } else {
+        nt=Math.max(el.life.inMs+1,Math.min(INFO.durationMs,nt));
+        if(nt<lifeLimitEnd(el)+1){ toast('无法移动：先把它下面轨迹/特效行的终点往前拖',true); return; }
+        el.life.outMs=nt; laneDrag.t=nt;
+      }
       clampToLife(el);
     } else {
       var b=boundsFor(el,laneDrag.lane), idx=b.findIndex(function(x){return Math.abs(x-laneDrag.t)<1;});
       var lo=idx>0?b[idx-1]+1:el.life.inMs+1, hi=(idx>=0&&idx<b.length-1)?b[idx+1]-1:el.life.outMs-1;
-      var nt=Math.max(lo,Math.min(hi,Math.round(t2)));
-      moveBoundary(el,laneDrag.lane,laneDrag.t,nt); laneDrag.t=nt;
+      var mt=Math.max(lo,Math.min(hi,Math.round(t2)));
+      moveBoundary(el,laneDrag.lane,laneDrag.t,mt); laneDrag.t=mt;
     }
     lanesRender(); renderProps(); live();
   });
