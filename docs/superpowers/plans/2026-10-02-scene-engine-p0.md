@@ -70,8 +70,10 @@ tests/scene/
 - [ ] **Step 1: 在 `package.json` 的 `scripts` 里加（放在 `"smoke"` 之后）**
 
 ```json
-    "test": "node --test tests/",
+    "test": "node --test",
 ```
+
+> Node ≥20 兼容。`node --test tests/` 在 Node 24 上会把 `tests/` 当模块解析而报错，所以用无参形式，让 Node 自行发现 `tests/**/*.test.js`。
 
 - [ ] **Step 2: 写失败测试 `tests/scene/format.test.js`**
 
