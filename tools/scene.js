@@ -22,6 +22,8 @@ import { registerProjectFonts } from "../src/core/fonts.js";
 import { parsePost, buildPostFilter, hasPost } from "../src/core/post.js";
 import { normalizeScene, SceneFormatError } from "../src/scene/format.js";
 import { loadBlocks, assertSceneBlocks } from "../src/scene/registry.js";
+import { ensureBoardsLoaded, validateBoardIds } from "../src/scene/board-layer.js";
+import { boards, resolveRange } from "../src/core/registry.js";
 import { renderSceneFrame } from "../src/scene/render.js";
 
 const argv = process.argv.slice(2);
@@ -43,6 +45,10 @@ try {
   const raw = JSON.parse(readFileSync(resolve(ROOT, FILE), "utf8"));
   scene = normalizeScene(raw);
   assertSceneBlocks(scene);
+  if (scene.boards.length) {
+    await ensureBoardsLoaded();
+    validateBoardIds(scene.boards);
+  }
 } catch (err) {
   if (err instanceof SceneFormatError) console.error(`❌ 场景格式错误：${err.message}`);
   else console.error(`❌ 加载场景失败：${err.message}`);
@@ -196,6 +202,15 @@ function runSelfcheck() {
   for (const el of scene.elements) {
     declared.add(`element:${el.block}`);
     for (const seg of el.tracks) if (seg.kind === "fx") declared.add(`fx:${seg.block}`);
+  }
+  // 画板层：等距采样可能漏掉短画板，按每块中点补采以后再判覆盖
+  for (const bid of scene.boards) {
+    declared.add(`board:${bid}`);
+    const b = boards.find((x) => x.meta.id === bid);
+    if (!b) continue;
+    const r = resolveRange(b.meta);
+    const mid = Math.round((r.startMs + r.endMs) / 2);
+    renderSceneFrame(a.ctx, scene, Math.round((mid / 1000) * fps), { floor: FLOOR, used });
   }
   const missing = [...declared].filter((n) => !used.has(n));
   if (missing.length) { ok = false; console.log(`❌ 有块从未被求值：${missing.join(", ")}`); }

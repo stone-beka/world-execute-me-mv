@@ -8,6 +8,7 @@ import { envelope } from "../core/fade.js";
 import { easeFn } from "../core/motion.js";
 import { clamp01 } from "../core/kernel.js";
 import { getElementBlock, getTrackBlock, getFxBlock } from "./registry.js";
+import { drawSceneBoards } from "./board-layer.js";
 
 export function resolveElement(el, ms) {
   const life = el.life;
@@ -43,6 +44,12 @@ export function resolveElement(el, ms) {
 export function evaluateScene(ctx, scene, s, opt = {}) {
   const used = opt.used ?? null;
   let drawn = 0;
+
+  // 先画旧画板（在下），再画声明式元素（在上）
+  if (scene.boards && scene.boards.length) {
+    drawn += drawSceneBoards(ctx, s, scene.boards, { used });
+  }
+
   for (const el of scene.elements) {
     try {
       const r = resolveElement(el, s.ms);
