@@ -7,6 +7,38 @@ Mili《world.execute(me);》的 MV。画面是代码，不是剪辑软件里的�
 
 ---
 
+## 这是什么
+
+一支 3 分 32 秒的 MV，但**画面不是剪出来的，是渲染出来的**：每一帧都是 `(seed, 帧号)` 的纯函数，一条命令直接出 1080p60。没有时间线、没有剪辑工程、没有逐帧手绘。
+
+**为什么值得看**：它把「创作者的手感」变成了可被机器验证的工程约束。多数人说自己「渲染是确定性的」只能靠嘴，这里用三条独立路径去证伪。
+
+## 30 秒跑起来
+
+```bash
+git clone https://github.com/stone-beka/world-execute-me-mv.git && cd world-execute-me-mv
+npm install
+npm run smoke                                 # 3 秒冒烟片，先确认环境通了
+npm run preview -- --only shot-04 --video     # 单块试片
+npm run verify                                # 四关全绿才算过：static / gap / ink / determinism
+npm run render -- --out out/full.mp4 --jobs 4 # 全片（单机以小时计）
+```
+
+## 确定性是怎么被验证的
+
+`verify/determinism-check.js` 不相信口头承诺：
+
+1. 静态扫描源码里的 `Math.random` / `Date.now` / `performance.now` —— 时间与随机是确定性的天敌
+2. 同一帧渲两遍，**sha1 逐字节比对**
+3. **倒序**重渲全片 —— 抓「某块画板偷偷依赖上一帧状态」
+4. **交错插帧**重渲 —— 抓帧间污染
+
+## 版权
+
+音乐与音源版权归 Mili / 原作者所有。仓库**不包含音频**（`assets/audio/` 已在 `.gitignore`），需自备音源才能出片。代码 MIT。
+
+---
+
 ## 现在到哪一步了
 
 **全片 14 块画板都实现了**（`src/boards/01-…14-…`，0:00 → 3:32 连续覆盖），
