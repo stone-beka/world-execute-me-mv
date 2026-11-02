@@ -24,6 +24,12 @@ npm run verify                                # 四关全绿才算过：static /
 npm run render -- --out out/full.mp4 --jobs 4 # 全片（单机以小时计）
 ```
 
+> **跑不起来的话**：`ffmpeg-static` / `ffprobe-static` 的 postinstall 会从 **GitHub Releases** 下载二进制，
+> 在 GitHub 被墙的网络里会卡住。两个办法：
+> ① `npm install --ignore-scripts`（测试不需要 ffmpeg，只出片需要）；
+> ② `npm install --registry=https://registry.npmmirror.com --ignore-scripts`，再自行把 ffmpeg 放进 PATH。
+> 另：`npm test` 只需要 26 个包、2 秒装完，57 个用例全绿——CI 就是按这个路径跑的。
+
 ## 确定性是怎么被验证的
 
 `verify/determinism-check.js` 不相信口头承诺：

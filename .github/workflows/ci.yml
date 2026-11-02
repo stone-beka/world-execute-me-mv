@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # --ignore-scripts：跳过 ffmpeg-static / ffprobe-static 的二进制下载。
+      # 那两步只对「出片」有用，而测试只验证场景引擎与渲染的确定性，
+      # 不需要 ffmpeg。跳过之后 install 从 ~100MB 降到 ~26 包、2 秒。
+      - name: Install
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Unit tests
+        run: node --test
