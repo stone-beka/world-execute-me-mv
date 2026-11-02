@@ -16,3 +16,8 @@ assets/*.m4a
 # 生成物：由 tools/parse-midi.js 产出，可随时重建
 assets/onsets.js
 assets/onsets.json
+# DSH project skills (local, machine-specific; add via DSH skill roots)
+.dsh/skills/
+
+# ??????????
+*.bak
